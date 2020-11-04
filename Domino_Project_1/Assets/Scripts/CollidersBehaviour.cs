@@ -6,9 +6,8 @@ public class CollidersBehaviour : MonoBehaviour
 {
     private int value;
     private int otherValue;
-    private bool isBorder;
+    //private bool isBorder;
     public bool canAttach;
-   // private bool isOnHand;
 
     public Collider2D HPieceCollider;
 
@@ -22,14 +21,14 @@ public class CollidersBehaviour : MonoBehaviour
         FullPiece = this.transform.parent.transform.parent;
 
         value = GetComponentInParent<PieceBehaviour>().GetValue();
-        isBorder = GetComponentInParent<PieceBehaviour>().GetIsBorder();
+        //isBorder = GetComponentInParent<PieceBehaviour>().GetIsBorder();
         //isOnHand = transform.parent.GetComponentInParent<PieceBehaviour>().GetIsOnHand();
     }
 
 private void OnTriggerEnter2D(Collider2D other)
     {
         //verifica se a peça atual é borda
-        isBorder = GetComponentInParent<PieceBehaviour>().GetIsBorder();
+        //isBorder = GetComponentInParent<PieceBehaviour>().GetIsBorder();
         //Debug.Log(this.name + " is colliding with " + other.gameObject.name);
 
         if(other.gameObject.CompareTag("FullPiece"))
@@ -37,18 +36,18 @@ private void OnTriggerEnter2D(Collider2D other)
             return;
         }
 
+        canAttach = !this.GetComponentInParent<HalfPiece>().halfPieceConnected;
+
         //se ambos colisores são do "lado" da peça, elas não podem se juntar
-        if (!canAttach && !other.gameObject.GetComponent<CollidersBehaviour>().canAttach)
+        if (!canAttach || !other.gameObject.GetComponent<CollidersBehaviour>().canAttach)
             return;
 
-        /*
         //se ambas as peças são da mão do jogador, não podem se juntar
-        if (isOnHand && other.gameObject.transform.parent.GetComponentInParent<PieceBehaviour>().GetIsOnHand())
+        if (FullPiece.transform.parent == other.GetComponent<CollidersBehaviour>().FullPiece.transform.parent)
             return;
-            */
 
         //se o outro objeto tambem é borda
-        if (other.gameObject.GetComponent<CollidersBehaviour>().isBorder)
+        if (!other.gameObject.GetComponentInParent<HalfPiece>().halfPieceConnected)
         {
             Debug.Log(other.gameObject.name + " is a Border Piece");
 
@@ -69,8 +68,10 @@ private void OnTriggerEnter2D(Collider2D other)
                 FullPiece.transform.SetParent(TableTransform, true);
                 
                 //faz com que as peças posicionadas não sejam mais consideradas bordas
-                this.GetComponentInParent<PieceBehaviour>().isBorder = false;
-                other.GetComponentInParent<PieceBehaviour>().isBorder = false;
+                //this.GetComponentInParent<PieceBehaviour>().isBorder = false;
+                //other.GetComponentInParent<PieceBehaviour>().isBorder = false;
+                this.GetComponentInParent<HalfPiece>().halfPieceConnected = true;
+                other.GetComponentInParent<HalfPiece>().halfPieceConnected = true;
             }
             else
             {

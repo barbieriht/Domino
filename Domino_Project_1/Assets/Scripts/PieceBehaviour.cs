@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class PieceBehaviour : MonoBehaviour
 {
@@ -22,6 +23,12 @@ public class PieceBehaviour : MonoBehaviour
     public void SetValue(int x)
     {
         value = x;
+    }
+
+    [PunRPC]
+    public void TurnActive(bool x)
+    {
+        this.gameObject.SetActive(x);
     }
 
     /*public void SetBool(bool b)

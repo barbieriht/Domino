@@ -3,100 +3,173 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
-
-public class GameController : MonoBehaviour
+using Photon.Pun.UtilityScripts;
+public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
 {
-    private GameObject[] Pieces;
-    private bool[] auxPieces;
-    private GameObject FirstPiece;
+    public GameObject[] Pieces;
+    [SerializeField]
+    public bool[] fullDeck;
+    string thisPieceName;
+    public int amountOfCards = 28;
+    ServerData serverData;
+    //private GameObject FirstPiece;
 
-    private Transform PlayerHand;
+    private GameObject Table;
+    private Transform playerHand;
 
+    void IPunTurnManagerCallbacks.OnTurnBegins(int turn)
+    {
+
+    }
+
+    void IPunTurnManagerCallbacks.OnTurnCompleted(int turn)
+    {
+
+    }
+
+    void IPunTurnManagerCallbacks.OnPlayerMove(Player player, int turn, object move)
+    {
+
+    }
+
+    void IPunTurnManagerCallbacks.OnPlayerFinished(Player player, int turn, object move)
+    {
+
+    }
+
+    void IPunTurnManagerCallbacks.OnTurnTimeEnds(int turn)
+    {
+
+    }
+    
     private void Start()
     {
-        Pieces = GameObject.FindGameObjectsWithTag("FullPiece");
-        PlayerHand = GameObject.FindGameObjectWithTag("PlayerHand").transform;
-        auxPieces = new bool[28];
+        amountOfCards = 28;
+        fullDeck = new bool[28];
+        ResetCards(fullDeck);
 
-        for (int j = 0; j < 28; j++)
+        //Pieces = GameObject.FindGameObjectsWithTag("FullPiece");
+        playerHand = GameObject.FindGameObjectWithTag("PlayerHand").transform;
+        serverData = this.GetComponent<ServerData>();
+        //PhotonNetwork.Instantiate("Table", new Vector3(0, 0, 0), Quaternion.identity);
+
+        Table = GameObject.FindGameObjectWithTag("Table");
+
+        if (Table == null)
+            Debug.LogError("There's no table");
+
+        /*if(PhotonNetwork.IsMasterClient)
         {
-            auxPieces[j] = false;
-            Pieces[j].transform.position = new Vector3(0,0,0);
-            Pieces[j].SetActive(false);
+            DistributeCards2(PhotonNetwork.PlayerList.Length);
+        }*/
+
+        /*if(PhotonNetwork.IsMasterClient)
+        {
+            InstantiateFirstCard();
         }
+        */
 
-        FirstPiece = TurnPieceVisibleGO();
+        //DistributeCards();
 
-        FirstPiece.transform.SetParent(GameObject.FindGameObjectWithTag("Table").transform);
     }
 
-    [PunRPC]
-    public GameObject TurnPieceVisibleGO()
+   /* public void DistributeCards2(int qtd)
+    {
+        switch(qtd)
+        {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+        }
+    }*/
+
+    public void DistributeCards()
+    {
+        serverData.Distribute();
+    }
+
+    public void InstantiateFirstCard()
     {
         int i = Random.Range(0, 27);
-        while (auxPieces[i] == true)
-        {
-            i = Random.Range(0, 27);
-        }
-        Pieces[i].SetActive(true);
-        //string thisPieceName = GetPieceName(Pieces[i]);
-        //PhotonNetwork.Instantiate(Pieces[i].name, new Vector3(0, 0, 0), Quaternion.identity);
-        auxPieces[i] = true;
+        Debug.Log("Numero sorteado: " + i);
+        thisPieceName = Pieces[i].name;
 
-        return Pieces[i];
+        serverData.SetPieceOn(thisPieceName, new Vector3(0,0,0), new Quaternion(0,0,0,0), true);
+        amountOfCards--;
+        serverData.RefreshAmountOfCards(amountOfCards);
+        serverData.SavePickedPieces(i, true);
     }
+
+
 
     public void TurnPieceVisible()
     {
-        int i = Random.Range(0, 27);
-        while (auxPieces[i] == true)
+        if (amountOfCards == 0)
+            return;
+
+        int j = Random.Range(0, 10000)%28;
+        while (fullDeck[j] == true)
         {
-            i = Random.Range(0, 27);
+            j = Random.Range(0, 10000)%28;
         }
-        Pieces[i].transform.SetParent(PlayerHand, true);
-        Pieces[i].SetActive(true);
+        Debug.Log("Numero sorteado: " + j);
+
+
+        //Instantiate(Pieces[i], new Vector3(0, 0, 0), Quaternion.identity, PlayerHand);
+
+        /*Pieces[i].SetActive(true);
+
+        Pieces[i].transform.SetParent(PlayerHand, false);
+        Pieces[i].transform.localScale = new Vector3(30, 60);*/
+
+        GameObject thisPiece = Pieces[j];
         
-        auxPieces[i] = true;
+        thisPiece.transform.SetParent(playerHand, true);
+        thisPiece.transform.position = new Vector3(0, 0, 0);
+        thisPiece.transform.rotation = new Quaternion(0, 0, 0, 0);
+
+        amountOfCards--;
+        serverData.RefreshAmountOfCards(amountOfCards);
+        serverData.SavePickedPieces(j, true);
     }
+
     /*
-    public string GetPieceName(GameObject Piece)
+
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        string namePiece;
-        int mvalue = 0;
-        int Mvalue = 0;
-        int x = 0;
-        int y = 0;
-
-        int childs;
-
-        childs = Piece.transform.childCount;
-
-        for(int i = 0; i < childs; i++)
+        if (stream.IsWriting)
         {
-            if (i == 0)
-                x = Piece.transform.GetChild(i).GetComponent<PieceBehaviour>().GetValue();
-            else
-                y = Piece.transform.GetChild(i).GetComponent<PieceBehaviour>().GetValue();
+            stream.SendNext(fullDeck);
         }
-
-        OrganizeValues(x, y, mvalue, Mvalue);
-
-        namePiece = "Piece " + mvalue + " - " + Mvalue;
-
-        return namePiece;
+        else if (stream.IsReading)
+        {
+            SetDeck((bool[])stream.ReceiveNext());
+        }
     }
 
-    private void OrganizeValues(int i, int j, int mvalue, int Mvalue)
+    private void SetDeck(bool[] thisDeck)
     {
-        if(i < j)
+        for (int i = 0; i < thisDeck.Length; i++)
         {
-            mvalue = i;
-            Mvalue = j;
+            if (thisDeck[i] == fullDeck[i])
+                return;
+
+            fullDeck[i] = thisDeck[i];
         }
-        else
+    }
+    */
+
+    private void ResetCards(bool[] deck)
+    {
+        for (int i = 0; i < deck.Length; i++)
         {
-            mvalue = j;
-            Mvalue = i;
+            deck[i] = false;
         }
-    }*/
+    }
 }

@@ -44,6 +44,15 @@ namespace Photon.Realtime
         /// </summary>
         protected internal Room RoomReference { get; set; }
 
+        private int piecesAmount;
+
+        public int PiecesAmount(int amount, bool option)
+        {
+            //set = true, get = false
+            if (option)
+                piecesAmount = amount;
+            return piecesAmount;
+        }
 
         /// <summary>Backing field for property.</summary>
         private int actorNumber = -1;

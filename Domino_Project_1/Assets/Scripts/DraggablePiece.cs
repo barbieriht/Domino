@@ -7,12 +7,13 @@ public class DraggablePiece : MonoBehaviour
     private Vector3 screenPoint;
     private Vector3 offset;
 
-    private Transform TableTransform;
+    //private Transform TableTransform;
+    /*
     private void Start()
     {
         TableTransform = GameObject.FindGameObjectWithTag("Table").transform;
     }
-
+    */
     void OnMouseDown()
     {
         screenPoint = Camera.main.WorldToScreenPoint(transform.position);
@@ -23,8 +24,10 @@ public class DraggablePiece : MonoBehaviour
 
     void OnMouseDrag()
     {
+       // this.GetComponent<CollidersBehaviour>().isHolding = true;
+
         //não pode ser movida se já pertencer à mesa
-        if (this.transform.IsChildOf(TableTransform))
+        if (this.transform.IsChildOf(GameObject.FindGameObjectWithTag("Table").transform))
         {
             return;
         }
@@ -39,5 +42,16 @@ public class DraggablePiece : MonoBehaviour
         Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
         Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
         transform.position = curPosition;
+    }
+    /*
+    private void OnMouseUp()
+    {
+        this.GetComponent<CollidersBehaviour>().isHolding = false;
+    }
+    */
+
+    public void Destroy()
+    {
+        Destroy(gameObject);
     }
 }

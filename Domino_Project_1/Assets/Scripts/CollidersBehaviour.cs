@@ -8,16 +8,17 @@ public class CollidersBehaviour : MonoBehaviour
     private int otherValue;
     //private bool isBorder;
     public bool canAttach;
+    public bool isHolding;
 
     public Collider2D HPieceCollider;
 
-    private Transform TableTransform;
+    //private Transform TableTransform;
     public Transform FullPiece;
 
     void Start()
     {
         HPieceCollider = this.GetComponent<Collider2D>();
-        TableTransform = GameObject.FindGameObjectWithTag("Table").transform;
+        //TableTransform = GameObject.FindGameObjectWithTag("Table").transform;
         FullPiece = this.transform.parent.transform.parent;
 
         value = GetComponentInParent<PieceBehaviour>().GetValue();
@@ -25,7 +26,7 @@ public class CollidersBehaviour : MonoBehaviour
         //isOnHand = transform.parent.GetComponentInParent<PieceBehaviour>().GetIsOnHand();
     }
 
-private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         //verifica se a peça atual é borda
         //isBorder = GetComponentInParent<PieceBehaviour>().GetIsBorder();
@@ -35,6 +36,9 @@ private void OnTriggerEnter2D(Collider2D other)
         {
             return;
         }
+
+        if (isHolding == true)
+            return;
 
         canAttach = !this.GetComponentInParent<HalfPiece>().halfPieceConnected;
 
@@ -60,12 +64,12 @@ private void OnTriggerEnter2D(Collider2D other)
                 Debug.Log(other.gameObject.name + " got the same value: " + otherValue);
 
                 //transforma o objeto atual em um "filho" da mesa
-                if(FullPiece.transform.parent == TableTransform)
+                if(FullPiece.transform.parent == GameObject.FindGameObjectWithTag("Table").transform)
                 {
                     return;
                 }
 
-                FullPiece.transform.SetParent(TableTransform, true);
+                FullPiece.transform.SetParent(GameObject.FindGameObjectWithTag("Table").transform, true);
                 
                 //faz com que as peças posicionadas não sejam mais consideradas bordas
                 //this.GetComponentInParent<PieceBehaviour>().isBorder = false;

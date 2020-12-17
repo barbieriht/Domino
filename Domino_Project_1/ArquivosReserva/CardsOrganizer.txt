@@ -1,0 +1,63 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+
+public class CardsOrganizer : MonoBehaviourPun
+{
+    /*
+    public bool[] fullDeck;
+    
+    private void Start()
+    {
+        fullDeck = new bool[28];
+        ResetCards();
+    }
+    
+    
+    /*public void ResetCards()
+    {
+        GetComponent<PhotonView>().RPC("ResetCardsPUN", RpcTarget.All);
+    }*/
+    /*
+    public bool[] UpdateCards(bool []usedPieces, int i)
+    {
+        GetComponent<PhotonView>().RPC("UpdateCardsPUN", RpcTarget.All, usedPieces, i);
+
+        return fullDeck;
+
+    }
+    /*public void InstantiateACard(GameObject gameObject)
+    {
+        if(photonView == null)
+        {
+            Debug.LogWarning("There's no table view");                                
+        }
+        GetComponent<PhotonView>().RPC("InstantiateACardPUN", RpcTarget.All, gameObject); 
+    }*/
+
+/*
+   // [PunRPC]
+    public void ResetCards()
+    {
+        for (int j = 0; j < 27; j++)
+        {
+            fullDeck[j] = false;
+        }
+    }
+
+    [PunRPC]
+    public void UpdateCardsPUN(bool []usedPieces, int i)
+    {
+        fullDeck[i] = usedPieces[i];
+    }
+
+    //[PunRPC]
+    public void InstantiateACard(GameObject gameObject)
+    {
+        PhotonNetwork.Instantiate(gameObject.name, new Vector3(0, 0, 0), Quaternion.identity);
+        gameObject.transform.SetParent(GameObject.FindGameObjectWithTag("Table").transform);
+        gameObject.SetActive(true);
+    }*/
+}

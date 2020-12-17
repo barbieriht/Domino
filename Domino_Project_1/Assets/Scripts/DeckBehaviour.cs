@@ -23,13 +23,5 @@ public class DeckBehaviour : MonoBehaviour
     private void OnMouseDown()
     {
         Debug.Log("OnMouseDown");
-
-        int i = Random.Range(0, 27);
-        while(auxPieces[i] == true)
-        {
-            i = Random.Range(0, 27);
-        }
-        Instantiate(Pieces[i], new Vector3(0,0,0), Quaternion.identity, PlayerHand);
-        auxPieces[i] = true;
     }
 }

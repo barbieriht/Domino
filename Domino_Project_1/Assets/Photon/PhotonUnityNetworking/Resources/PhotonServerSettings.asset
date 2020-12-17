@@ -40,6 +40,24 @@ MonoBehaviour:
   - RespawnSpaceship
   - TurnPieceVisibleGO
   - TurnPieceVisible
+  - ResetCards
+  - UpdateCards
+  - InstantiateACard
+  - InstantiateACardPUN
+  - ResetCardsPUN
+  - UpdateCardsPUN
+  - TurnActive
+  - InstantiateFirstCardPUN
+  - SetPieceOff
+  - SetPieceOn
+  - SavePickedPieces
+  - SavePickedPiecesPUN
+  - SetPieceOffPUN
+  - SetPieceOnPUN
+  - SavePlayersData
+  - SavePlayersDataPUN
+  - DistributePUN
+  - RefreshAmountOfCardsPUN
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

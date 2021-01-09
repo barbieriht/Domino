@@ -6,23 +6,8 @@ using Photon.Pun;
 
 public class PlayerController : MonoBehaviour
 {
-    PhotonView photonView;
-    private void Awake()
-    {
-        photonView = this.gameObject.GetComponent<PhotonView>();
-    }
+    public int cardsInHand { get; set; }
+    public string nickName { get; set; }
+    public int biggestBombInHand { get; set; }
 
-    private void Start()
-    {
-        OnPlayerInstantiated();
-    }
-
-    private void OnPlayerInstantiated()
-    {
-        //se sou um jogador humano 
-        if (this.photonView.IsMine)
-        {
-            
-        }
-    }
 }

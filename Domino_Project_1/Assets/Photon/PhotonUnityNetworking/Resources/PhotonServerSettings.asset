@@ -58,6 +58,18 @@ MonoBehaviour:
   - SavePlayersDataPUN
   - DistributePUN
   - RefreshAmountOfCardsPUN
+  - PrintPlayersPUN
+  - AddPlayerPUN
+  - PrintAllPlayersPUN
+  - PlayerOrderPUN
+  - AllBombsPUN
+  - OrganizeBombsPUN
+  - AddPlayerPCPUN
+  - DistributepcPUN
+  - PrintAllPlayersPCPUN
+  - ItsTheBiggestPUN
+  - AddOnListOrganizedPUN
+  - AddOnListOfCardsPUN
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

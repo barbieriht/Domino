@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class DraggablePiece : MonoBehaviour
 {
+    public int cardNumber;
+    public bool isDouble;
     private Vector3 screenPoint;
     private Vector3 offset;
 

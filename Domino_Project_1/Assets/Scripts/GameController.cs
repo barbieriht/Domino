@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Pun.UtilityScripts;
+
 public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
 {
     public GameObject[] Pieces;
@@ -11,36 +12,17 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
     public bool[] fullDeck;
     string thisPieceName;
     public int amountOfCards = 28;
-    ServerData serverData;
+    public ServerData serverData;
+
+    
+    //PlayerController playerController;
+
     //private GameObject FirstPiece;
 
     private GameObject Table;
     private Transform playerHand;
 
-    void IPunTurnManagerCallbacks.OnTurnBegins(int turn)
-    {
-
-    }
-
-    void IPunTurnManagerCallbacks.OnTurnCompleted(int turn)
-    {
-
-    }
-
-    void IPunTurnManagerCallbacks.OnPlayerMove(Player player, int turn, object move)
-    {
-
-    }
-
-    void IPunTurnManagerCallbacks.OnPlayerFinished(Player player, int turn, object move)
-    {
-
-    }
-
-    void IPunTurnManagerCallbacks.OnTurnTimeEnds(int turn)
-    {
-
-    }
+    
     
     private void Start()
     {
@@ -48,10 +30,9 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
         fullDeck = new bool[28];
         ResetCards(fullDeck);
 
-        //Pieces = GameObject.FindGameObjectsWithTag("FullPiece");
         playerHand = GameObject.FindGameObjectWithTag("PlayerHand").transform;
         serverData = this.GetComponent<ServerData>();
-        //PhotonNetwork.Instantiate("Table", new Vector3(0, 0, 0), Quaternion.identity);
+        //playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
 
         Table = GameObject.FindGameObjectWithTag("Table");
 
@@ -69,29 +50,31 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
         }
         */
 
-        //DistributeCards();
+        AddPlayerOnList();
 
+        serverData.PrintAllPlayers();
+
+        if (PhotonNetwork.IsMasterClient)
+            serverData.Distribute();
+
+        serverData.SelectBiggestBomb();
+        OrganizePlayerList();
+
+        serverData.PrintAllPlayers();
     }
 
-   /* public void DistributeCards2(int qtd)
+    public void OrganizePlayerList()
     {
-        switch(qtd)
-        {
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-        }
-    }*/
+        serverData.OrganizePlayerListpt1();
+        serverData.OrganizePlayerListpt2();
 
-    public void DistributeCards()
-    {
-        serverData.Distribute();
     }
+    public void AddPlayerOnList()
+    {
+        serverData.AddPlayer(PhotonNetwork.NickName);
+        //serverData.AddPlayerPC(playerController);
+    }
+
 
     public void InstantiateFirstCard()
     {
@@ -112,26 +95,31 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
         if (amountOfCards == 0)
             return;
 
-        int j = Random.Range(0, 10000)%28;
+        /*int j = Random.Range(0, 10000)%28;
         while (fullDeck[j] == true)
         {
             j = Random.Range(0, 10000)%28;
-        }
+        }*/
+
+        int j = serverData.AddOnListOfCards();
+
         Debug.Log("Numero sorteado: " + j);
 
-
-        //Instantiate(Pieces[i], new Vector3(0, 0, 0), Quaternion.identity, PlayerHand);
-
-        /*Pieces[i].SetActive(true);
-
-        Pieces[i].transform.SetParent(PlayerHand, false);
-        Pieces[i].transform.localScale = new Vector3(30, 60);*/
+        if (fullDeck == null)
+            Debug.LogError("fullDeck deu ruim");
 
         GameObject thisPiece = Pieces[j];
-        
+
+        if (thisPiece == null)
+            Debug.LogError("thisPiece deu ruim");
+
         thisPiece.transform.SetParent(playerHand, true);
         thisPiece.transform.position = new Vector3(0, 0, 0);
         thisPiece.transform.rotation = new Quaternion(0, 0, 0, 0);
+
+        if(Pieces[j].GetComponent<DraggablePiece>().isDouble && Pieces[j].GetComponent<DraggablePiece>().cardNumber > serverData.biggestBomb)
+            serverData.biggestBomb = Pieces[j].GetComponentInChildren<PieceBehaviour>().value;
+
 
         amountOfCards--;
         serverData.RefreshAmountOfCards(amountOfCards);
@@ -171,5 +159,30 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
         {
             deck[i] = false;
         }
+    }
+
+    void IPunTurnManagerCallbacks.OnTurnBegins(int turn)
+    {
+
+    }
+
+    void IPunTurnManagerCallbacks.OnTurnCompleted(int turn)
+    {
+
+    }
+
+    void IPunTurnManagerCallbacks.OnPlayerMove(Player player, int turn, object move)
+    {
+
+    }
+
+    void IPunTurnManagerCallbacks.OnPlayerFinished(Player player, int turn, object move)
+    {
+
+    }
+
+    void IPunTurnManagerCallbacks.OnTurnTimeEnds(int turn)
+    {
+
     }
 }

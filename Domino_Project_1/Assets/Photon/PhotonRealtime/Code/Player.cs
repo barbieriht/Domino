@@ -44,6 +44,8 @@ namespace Photon.Realtime
         /// </summary>
         protected internal Room RoomReference { get; set; }
 
+        public static readonly List<Player> AllPlayers = new List<Player>();
+
         private int piecesAmount;
 
         public int PiecesAmount(int amount, bool option)

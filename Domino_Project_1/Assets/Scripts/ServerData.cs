@@ -10,9 +10,11 @@ public class ServerData : MonoBehaviourPun
     public GameObject[] Pieces;
     public Transform tableTransform;
     public Transform playerHand;
+
     public bool isFirst = false;
     public int biggestBomb = 0;
     public int biggestGlobalBomb = 0;
+
     public static List<string> AllPlayers = new List<string>();
     public static List<string> AllPlayersOrganized = new List<string>();
     public static List<int> CardsAlreadyGived = new List<int>();
@@ -31,10 +33,10 @@ public class ServerData : MonoBehaviourPun
         playerHand = GameObject.FindGameObjectWithTag("PlayerHand").transform;
     }
 
+
     public void AddPlayer(string thisNickName) => photonView.RPC("AddPlayerPUN", RpcTarget.All, thisNickName);
 
     public void AddOnListOrganized(string nick) => photonView.RPC("AddOnListOrganizedPUN", RpcTarget.All, nick);
-
 
     public void PrintAllPlayers() => photonView.RPC("PrintAllPlayersPUN", RpcTarget.All);
 
@@ -48,8 +50,11 @@ public class ServerData : MonoBehaviourPun
 
     public void Distribute() => photonView.RPC("DistributePUN", RpcTarget.All);
 
-    public void RefreshAmountOfCards(int amount) => photonView.RPC("RefreshAmountOfCardsPUN", RpcTarget.All, amount);
+    public void SubtractCard() => photonView.RPC("SubtractCardPUN", RpcTarget.All);
 
+    public void ItsTheBiggest(int bomb) => photonView.RPC("ItsTheBiggestPUN", RpcTarget.All, bomb);
+
+    public void PrintInformationTest(string nickname, int cardnumber, int amount) => photonView.RPC("PrintTestPUN", RpcTarget.All, nickname, cardnumber, amount);
 
     public void OrganizePlayerListpt1()
     {
@@ -65,9 +70,9 @@ public class ServerData : MonoBehaviourPun
 
     public void SelectBiggestBomb()
     {
-        if(biggestBomb > biggestGlobalBomb)
+        if(this.biggestBomb > biggestGlobalBomb)
         {
-            ItsTheBiggest(biggestBomb);
+            ItsTheBiggest(this.biggestBomb);
         }
     }
 
@@ -91,6 +96,13 @@ public class ServerData : MonoBehaviourPun
         return number;
     }
 
+
+    [PunRPC]
+    void PrintTestPUN(string nick, int card, int amount)
+    {
+        Debug.Log(nick + ": " + card + " (" + amount + ")");
+    }
+
     [PunRPC]
     void AddOnListOfCardsPUN(int number)
     {
@@ -98,19 +110,19 @@ public class ServerData : MonoBehaviourPun
     }
 
 
-    public void ItsTheBiggest(int bomb) => photonView.RPC("ItsTheBiggestPUN", RpcTarget.All, bomb);
-
     [PunRPC]
     void AddOnListOrganizedPUN(string nick)
     {
         AllPlayersOrganized.Add(nick);
     }
 
+
     [PunRPC]
     void ItsTheBiggestPUN(int bomb)
     {
-        this.biggestGlobalBomb = bomb;
+        biggestGlobalBomb = bomb;
     }
+
 
     [PunRPC]
     void SetPieceOffPUN(string pieceName)
@@ -123,7 +135,6 @@ public class ServerData : MonoBehaviourPun
             }
         }
     }
-
 
 
     [PunRPC]
@@ -157,22 +168,6 @@ public class ServerData : MonoBehaviourPun
         thisPiece.transform.rotation = rotation;
     }
 
-    [PunRPC]
-    void SavePickedPiecesPUN(int i, bool option)
-    {
-       
-        if(option)
-        {
-            gameController.fullDeck[i] = true;
-            
-        }
-        else
-            gameController.fullDeck[i] = false;
-
-    }
-
-    
-
 
     [PunRPC]
     void DistributePUN()
@@ -193,12 +188,27 @@ public class ServerData : MonoBehaviourPun
     }
 
 
+    [PunRPC]
+    void SubtractCardPUN()
+    {
+        gameController.amountOfCards--;
+    }
+
 
     [PunRPC]
-    void RefreshAmountOfCardsPUN(int amount)
+    void SavePickedPiecesPUN(int i, bool option)
     {
-        gameController.amountOfCards = amount;
+
+        if (option)
+        {
+            gameController.fullDeck[i] = true;
+
+        }
+        else
+            gameController.fullDeck[i] = false;
+
     }
+
 
     [PunRPC]
     void SavePlayersDataPUN(string playerNick, int amountPieces)

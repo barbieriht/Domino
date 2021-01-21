@@ -22,6 +22,8 @@ ScriptsOnlyBuild:
     - Photon.Pun.Demo.PunBasics.PlayerUI
     - Photon.Pun.Demo.SlotRacer.PlayerControl
     - Photon.Pun.Demo.SlotRacer.Utils.SplineWalker
+    PhotonUnityNetworking.Editor.dll:
+    - Photon.Pun.PunSceneSettings
     PhotonUnityNetworking.Utilities.dll:
     - Photon.Pun.UtilityScripts.EventSystemSpawner
     - Photon.Pun.UtilityScripts.PlayerNumbering
@@ -110,6 +112,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 13152}
     - Class: 114
       Script: {instanceID: 13594}
+    - Class: 114
+      Script: {instanceID: 13610}
     - Class: 114
       Script: {instanceID: 14244}
     - Class: 114
@@ -1680,7 +1684,7 @@ ScriptsOnlyBuild:
     className: BoolInputField
   - hash:
       serializedVersion: 2
-      Hash: a23adcd9e6e43cf1cf80bcc735b20424
+      Hash: 7c17134183737e6e6b43e3c2e4746894
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: CollidersBehaviour

@@ -14,13 +14,15 @@ public class CollidersBehaviour : MonoBehaviour
 
     //private Transform TableTransform;
     public Transform FullPiece;
+    public ServerData serverData;
+    public Transform TableTransform;
 
     void Start()
     {
         HPieceCollider = this.GetComponent<Collider2D>();
-        //TableTransform = GameObject.FindGameObjectWithTag("Table").transform;
+        TableTransform = GameObject.FindGameObjectWithTag("Table").transform;
         FullPiece = this.transform.parent.transform.parent;
-
+        serverData = GameObject.FindGameObjectWithTag("GameController").GetComponent<ServerData>();
         value = GetComponentInParent<PieceBehaviour>().GetValue();
         //isBorder = GetComponentInParent<PieceBehaviour>().GetIsBorder();
         //isOnHand = transform.parent.GetComponentInParent<PieceBehaviour>().GetIsOnHand();
@@ -64,13 +66,14 @@ public class CollidersBehaviour : MonoBehaviour
                 Debug.Log(other.gameObject.name + " got the same value: " + otherValue);
 
                 //transforma o objeto atual em um "filho" da mesa
-                if(FullPiece.transform.parent == GameObject.FindGameObjectWithTag("Table").transform)
+                if(FullPiece.transform.parent == TableTransform)
                 {
                     return;
                 }
 
-                FullPiece.transform.SetParent(GameObject.FindGameObjectWithTag("Table").transform, true);
-                
+                FullPiece.transform.SetParent(TableTransform, true);
+                serverData.SetPieceOn(FullPiece.name, FullPiece.position, FullPiece.rotation, true);
+
                 //faz com que as peças posicionadas não sejam mais consideradas bordas
                 //this.GetComponentInParent<PieceBehaviour>().isBorder = false;
                 //other.GetComponentInParent<PieceBehaviour>().isBorder = false;

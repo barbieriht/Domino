@@ -444,6 +444,11 @@ MonoBehaviour:
   - {fileID: 365964971}
   - {fileID: 786270577}
   fullDeck: 
+  allCards: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  cardsToGive1: 00000000000000000000000000000000000000000000000000000000
+  cardsToGive2: 00000000000000000000000000000000000000000000000000000000
+  cardsToGive3: 00000000000000000000000000000000000000000000000000000000
+  cardsToGive4: 00000000000000000000000000000000000000000000000000000000
   amountOfCards: 28
   serverData: {fileID: 437452842}
 --- !u!4 &437452840
@@ -523,6 +528,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameController: {fileID: 437452839}
+  playerNumbering: {fileID: 0}
   Pieces: []
   tableTransform: {fileID: 7967559947147898960}
   playerHand: {fileID: 1310312408}
@@ -1181,7 +1187,6 @@ GameObject:
   - component: {fileID: 1348991972}
   - component: {fileID: 1348991971}
   - component: {fileID: 1348991970}
-  - component: {fileID: 1348991973}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1219,8 +1224,7 @@ MonoBehaviour:
   observableSearch: 2
   Synchronization: 1
   OwnershipTransfer: 0
-  ObservedComponents:
-  - {fileID: 1348991973}
+  ObservedComponents: []
   viewIdField: 31
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -1240,21 +1244,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1348991973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1348991969}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
 --- !u!1 &1474067834 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4232611528288964590, guid: a7267b81ddfcfeb438eb3bdcd7e3110a, type: 3}

@@ -9,8 +9,16 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
 {
     public GameObject[] Pieces;
     [SerializeField]
+
     public bool[] fullDeck;
-    string thisPieceName;
+
+    public int[] allCards = new int[28];
+    public int[] cardsToGive1 = new int[7];
+    public int[] cardsToGive2 = new int[7];
+    public int[] cardsToGive3 = new int[7];
+    public int[] cardsToGive4 = new int[7];
+
+
     public int amountOfCards = 28;
     public ServerData serverData;
 
@@ -22,8 +30,11 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
     private GameObject Table;
     private Transform playerHand;
 
-    
-    
+    private void Awake()
+    {
+        
+    }
+
     private void Start()
     {
         amountOfCards = 28;
@@ -38,17 +49,69 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
         if (Table == null)
             Debug.LogError("There's no table");
 
-        AddPlayerOnList();
 
         //serverData.PrintAllPlayers();
 
+        /*
         if (PhotonNetwork.IsMasterClient)
             serverData.Distribute();
+        */
+        AddPlayerOnList();
+        if (PhotonNetwork.IsMasterClient)
+        {
+            DistributeByArrays();
+            serverData.DistributeByArray(cardsToGive1, cardsToGive2, cardsToGive3, cardsToGive4);
+        }
 
         serverData.SelectBiggestBomb();
         OrganizePlayerList();
 
         //serverData.PrintAllPlayers();
+    }
+
+    public void DistributeByArrays()
+    {
+        for(int i = 0; i < 28; i++)
+        {
+            allCards[i] = i;
+        }
+
+        embaralhar(allCards);
+
+        for(int j = 0; j < 4; j++)
+        {
+            for(int k = 0; k < 7; k++)
+            {
+                switch(j)
+                {
+                    case 0:
+                        cardsToGive1[k] = allCards[k];
+                        break;
+                    case 1:
+                        cardsToGive2[k] = allCards[7 + k];
+                        break;
+                    case 2:
+                        cardsToGive3[k] = allCards[14 + k];
+                        break;
+                    case 3:
+                        cardsToGive4[k] = allCards[j * 7 + k];
+                        break;
+                }
+            }
+        }
+    }
+
+    static void embaralhar(int[] lista)
+    {
+
+        // vamos embaralhar o ArrayList
+        for (int i = 0; i < lista.Length; i++)
+        {
+            int a = Random.Range(0, 10000) % 28;
+            int temp = lista[i];
+            lista[i] = lista[a];
+            lista[a] = temp;
+        }
     }
 
     public void OrganizePlayerList()
@@ -64,18 +127,13 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
     }
 
 
-    public void TurnPieceVisible()
+    public void TurnPieceVisible(int j, int index)
     {
         if (amountOfCards == 0)
             return;
 
-        /*int j = Random.Range(0, 10000)%28;
-        while (fullDeck[j] == true)
-        {
-            j = Random.Range(0, 10000)%28;
-        }*/
 
-        int j = serverData.AddOnListOfCards();
+        //int j = serverData.AddOnListOfCards();
 
         //Debug.Log("Numero sorteado: " + j);
 
@@ -96,7 +154,7 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
 
         serverData.SubtractCard();
         serverData.SavePickedPieces(j, true);
-        serverData.PrintInformationTest(PhotonNetwork.NickName, j, amountOfCards);
+        serverData.PrintInformationTest(PhotonNetwork.NickName, j, amountOfCards, index);
     }
 
     private void ResetCards(bool[] deck)

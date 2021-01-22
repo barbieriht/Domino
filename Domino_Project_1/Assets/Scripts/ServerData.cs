@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Pun.UtilityScripts;
 
 public class ServerData : MonoBehaviourPun
 {
     public GameController gameController;
+
     public GameObject[] Pieces;
     public Transform tableTransform;
     public Transform playerHand;
@@ -20,9 +22,9 @@ public class ServerData : MonoBehaviourPun
     public static List<int> CardsAlreadyGived = new List<int>();
 
 
-    public int roundNumber
+    public int RoundNumber
     {
-        get => this.roundNumber;
+        get => this.RoundNumber;
         set => this.photonView.RPC("RpcSetRoundNumber", RpcTarget.All, (object)value);
     }
 
@@ -48,13 +50,16 @@ public class ServerData : MonoBehaviourPun
 
     public void SavePlayersData(string playerNick, int amountPieces) => photonView.RPC("SavePlayersDataPUN", RpcTarget.All, playerNick, amountPieces);
 
-    public void Distribute() => photonView.RPC("DistributePUN", RpcTarget.All);
+    //public void Distribute() => photonView.RPC("DistributePUN", RpcTarget.All);
+
+    public void DistributeByArray(int[] array1, int[] array2, int[] array3, int[] array4) => photonView.RPC("DistributeByArrayPUN", RpcTarget.All, array1, array2, array3, array4);
+
 
     public void SubtractCard() => photonView.RPC("SubtractCardPUN", RpcTarget.All);
 
     public void ItsTheBiggest(int bomb) => photonView.RPC("ItsTheBiggestPUN", RpcTarget.All, bomb);
 
-    public void PrintInformationTest(string nickname, int cardnumber, int amount) => photonView.RPC("PrintTestPUN", RpcTarget.All, nickname, cardnumber, amount);
+    public void PrintInformationTest(string nickname, int cardnumber, int amount, int index) => photonView.RPC("PrintTestPUN", RpcTarget.All, nickname, cardnumber, amount, index);
 
     public void OrganizePlayerListpt1()
     {
@@ -98,9 +103,9 @@ public class ServerData : MonoBehaviourPun
 
 
     [PunRPC]
-    void PrintTestPUN(string nick, int card, int amount)
+    void PrintTestPUN(string nick, int card, int amount, int index)
     {
-        Debug.Log(nick + ": " + card + " (" + amount + ")");
+        Debug.Log(nick + ": " + card + " (" + amount + ") " + index);
     }
 
     [PunRPC]
@@ -168,7 +173,7 @@ public class ServerData : MonoBehaviourPun
         thisPiece.transform.rotation = rotation;
     }
 
-
+    /*
     [PunRPC]
     void DistributePUN()
     {
@@ -183,10 +188,54 @@ public class ServerData : MonoBehaviourPun
                     Debug.LogError("gamecontroller fudeu");
                 gameController.TurnPieceVisible();
             }
-            
         }
     }
+    */
 
+    [PunRPC]
+    void DistributeByArrayPUN(int[] array1, int[] array2, int[] array3, int[] array4)
+    {
+        int index = 0;
+        foreach(Player player in PhotonNetwork.PlayerList)
+        {
+            if (player.NickName == PhotonNetwork.NickName)
+            {
+                break;
+            }
+            index++;
+        }
+
+        switch (index)
+        {
+            case 0:
+                for (int i = 0; i < array1.Length; i++)
+                {
+                    gameController.TurnPieceVisible(array1[i], index);
+                }
+                break;
+            case 1:
+                for (int i = 0; i < array1.Length; i++)
+                {
+                    gameController.TurnPieceVisible(array2[i], index);
+                }
+                break;
+            case 2:
+                for (int i = 0; i < array1.Length; i++)
+                {
+                    gameController.TurnPieceVisible(array3[i], index);
+                }
+                break;
+            case 3:
+                for (int i = 0; i < array1.Length; i++)
+                {
+                    gameController.TurnPieceVisible(array4[i], index);
+                }
+                break;
+            default:
+                break;
+        }
+
+    }
 
     [PunRPC]
     void SubtractCardPUN()

@@ -73,6 +73,13 @@ MonoBehaviour:
   - PrintTestPUN
   - SubtractCardPUN
   - DistributeByArrayPUN
+  - AddMyBiggestBombPUN
+  - FindTheBiggestGlobalBombPUN
+  - AddMyBombsPUN
+  - SortBombsPUN
+  - PrintAllBombs
+  - PrintAllBombsPUN
+  - RefreshPlayersWithCardsPUN
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

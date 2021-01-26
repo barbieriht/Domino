@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
@@ -30,10 +31,6 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
     private GameObject Table;
     private Transform playerHand;
 
-    private void Awake()
-    {
-        
-    }
 
     private void Start()
     {
@@ -56,6 +53,7 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
         if (PhotonNetwork.IsMasterClient)
             serverData.Distribute();
         */
+
         AddPlayerOnList();
         if (PhotonNetwork.IsMasterClient)
         {
@@ -63,7 +61,6 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
             serverData.DistributeByArray(cardsToGive1, cardsToGive2, cardsToGive3, cardsToGive4);
         }
 
-        serverData.SelectBiggestBomb();
         OrganizePlayerList();
 
         //serverData.PrintAllPlayers();
@@ -104,7 +101,6 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
     static void embaralhar(int[] lista)
     {
 
-        // vamos embaralhar o ArrayList
         for (int i = 0; i < lista.Length; i++)
         {
             int a = Random.Range(0, 10000) % 28;
@@ -149,12 +145,17 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
         thisPiece.transform.position = new Vector3(0, 0, 0);
         thisPiece.transform.rotation = new Quaternion(0, 0, 0, 0);
 
-        if(Pieces[j].GetComponent<DraggablePiece>().isDouble && Pieces[j].GetComponentInChildren<PieceBehaviour>().value > serverData.biggestBomb)
-            serverData.biggestBomb = Pieces[j].GetComponentInChildren<PieceBehaviour>().value;
+        if(Pieces[j].GetComponent<DraggablePiece>().isDouble)
+        {
+            serverData.AddMyBombs(Pieces[j].GetComponentInChildren<PieceBehaviour>().value);
+            if (Pieces[j].GetComponentInChildren<PieceBehaviour>().value > serverData.biggestBomb)
+                serverData.biggestBomb = Pieces[j].GetComponentInChildren<PieceBehaviour>().value;
+        }
+
 
         serverData.SubtractCard();
         serverData.SavePickedPieces(j, true);
-        serverData.PrintInformationTest(PhotonNetwork.NickName, j, amountOfCards, index);
+        //serverData.PrintInformationTest(PhotonNetwork.NickName, j, amountOfCards, index);
     }
 
     private void ResetCards(bool[] deck)

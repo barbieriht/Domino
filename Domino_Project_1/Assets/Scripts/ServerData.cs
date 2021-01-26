@@ -16,10 +16,13 @@ public class ServerData : MonoBehaviourPun
     public bool isFirst = false;
     public int biggestBomb = 0;
     public int biggestGlobalBomb = 0;
+    public int playerIndex = 0;
+    public int playersWithCards = 0;
 
     public static List<string> AllPlayers = new List<string>();
     public static List<string> AllPlayersOrganized = new List<string>();
     public static List<int> CardsAlreadyGived = new List<int>();
+    public static List<int> AllBiggestBombs = new List<int>();
 
 
     public int RoundNumber
@@ -39,6 +42,10 @@ public class ServerData : MonoBehaviourPun
     public void AddPlayer(string thisNickName) => photonView.RPC("AddPlayerPUN", RpcTarget.All, thisNickName);
 
     public void AddOnListOrganized(string nick) => photonView.RPC("AddOnListOrganizedPUN", RpcTarget.All, nick);
+
+    public void AddMyBombs(int bomb) => photonView.RPC("AddMyBombsPUN", RpcTarget.All, bomb);
+
+    public void SortBombs() => photonView.RPC("SortBombsPUN", RpcTarget.All);
 
     public void PrintAllPlayers() => photonView.RPC("PrintAllPlayersPUN", RpcTarget.All);
 
@@ -61,25 +68,20 @@ public class ServerData : MonoBehaviourPun
 
     public void PrintInformationTest(string nickname, int cardnumber, int amount, int index) => photonView.RPC("PrintTestPUN", RpcTarget.All, nickname, cardnumber, amount, index);
 
+    public void PrintAllBombs() => photonView.RPC("PrintAllBombsPUN", RpcTarget.All);
+
     public void OrganizePlayerListpt1()
     {
-        if (this.biggestBomb == biggestGlobalBomb)
+        if (isFirst)
             AddOnListOrganized(PhotonNetwork.NickName);
     }
 
     public void OrganizePlayerListpt2()
     {
-        if (this.biggestBomb != biggestGlobalBomb)
+        if (!isFirst)
             AddOnListOrganized(PhotonNetwork.NickName);
     }
 
-    public void SelectBiggestBomb()
-    {
-        if(this.biggestBomb > biggestGlobalBomb)
-        {
-            ItsTheBiggest(this.biggestBomb);
-        }
-    }
 
     public int AddOnListOfCards()
     {
@@ -101,6 +103,44 @@ public class ServerData : MonoBehaviourPun
         return number;
     }
 
+
+    [PunRPC]
+    void AddMyBombsPUN(int bomb)
+    {
+        AllBiggestBombs.Add(bomb);
+        Debug.Log("Added bomb: " + bomb);
+    }
+
+    [PunRPC]
+    void SortBombsPUN()
+    {
+        AllBiggestBombs.Sort();
+        //PrintAllBombs();
+        biggestGlobalBomb = AllBiggestBombs[AllBiggestBombs.Count - 1];
+        Debug.Log("The biggest bomb is " + biggestGlobalBomb);
+
+        foreach (Player player in PhotonNetwork.PlayerList)
+        {
+            if (player.NickName == PhotonNetwork.NickName)
+            {
+                if (biggestBomb == biggestGlobalBomb)
+                {
+                    isFirst = true;
+                    Debug.Log(PhotonNetwork.NickName + " got the biggest bomb: " + biggestGlobalBomb);
+                }
+            }
+        }
+
+    }
+
+    [PunRPC]
+    void PrintAllBombsPUN()
+    {
+        foreach(int bomb in AllBiggestBombs)
+        {
+            Debug.Log("Bomb: " + bomb);
+        }
+    }
 
     [PunRPC]
     void PrintTestPUN(string nick, int card, int amount, int index)
@@ -195,47 +235,52 @@ public class ServerData : MonoBehaviourPun
     [PunRPC]
     void DistributeByArrayPUN(int[] array1, int[] array2, int[] array3, int[] array4)
     {
-        int index = 0;
         foreach(Player player in PhotonNetwork.PlayerList)
         {
             if (player.NickName == PhotonNetwork.NickName)
             {
                 break;
             }
-            index++;
+            playerIndex++;
         }
 
-        switch (index)
+        switch (playerIndex)
         {
             case 0:
                 for (int i = 0; i < array1.Length; i++)
                 {
-                    gameController.TurnPieceVisible(array1[i], index);
+                    gameController.TurnPieceVisible(array1[i], playerIndex);
                 }
                 break;
             case 1:
-                for (int i = 0; i < array1.Length; i++)
+                for (int i = 0; i < array2.Length; i++)
                 {
-                    gameController.TurnPieceVisible(array2[i], index);
+                    gameController.TurnPieceVisible(array2[i], playerIndex);
                 }
                 break;
             case 2:
-                for (int i = 0; i < array1.Length; i++)
+                for (int i = 0; i < array3.Length; i++)
                 {
-                    gameController.TurnPieceVisible(array3[i], index);
+                    gameController.TurnPieceVisible(array3[i], playerIndex);
                 }
                 break;
             case 3:
-                for (int i = 0; i < array1.Length; i++)
+                for (int i = 0; i < array4.Length; i++)
                 {
-                    gameController.TurnPieceVisible(array4[i], index);
+                    gameController.TurnPieceVisible(array4[i], playerIndex);
                 }
                 break;
             default:
                 break;
         }
 
+        if(playerIndex + 1 == PhotonNetwork.PlayerList.Length)
+        {
+            Debug.Log("PlayersWithCards: " + playersWithCards + " & PlayerList.Length: " + PhotonNetwork.PlayerList.Length);
+            SortBombs();
+        }
     }
+
 
     [PunRPC]
     void SubtractCardPUN()

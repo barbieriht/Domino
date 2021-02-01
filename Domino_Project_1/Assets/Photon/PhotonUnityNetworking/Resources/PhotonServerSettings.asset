@@ -80,6 +80,10 @@ MonoBehaviour:
   - PrintAllBombs
   - PrintAllBombsPUN
   - RefreshPlayersWithCardsPUN
+  - PrintTextPUN
+  - Select1stPlayer
+  - Select1stPlayerPUN
+  - SetBiggestBombPUN
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

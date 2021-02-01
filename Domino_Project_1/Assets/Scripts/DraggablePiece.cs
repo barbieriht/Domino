@@ -8,26 +8,19 @@ public class DraggablePiece : MonoBehaviour
     public bool isDouble;
     private Vector3 screenPoint;
     private Vector3 offset;
+    public ServerData serverData;
 
-    //private Transform TableTransform;
-    /*
-    private void Start()
-    {
-        TableTransform = GameObject.FindGameObjectWithTag("Table").transform;
-    }
-    */
     void OnMouseDown()
     {
         screenPoint = Camera.main.WorldToScreenPoint(transform.position);
         offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
     }
 
-    
 
     void OnMouseDrag()
     {
-       // this.GetComponent<CollidersBehaviour>().isHolding = true;
-
+        // this.GetComponent<CollidersBehaviour>().isHolding = true;
+        
         //não pode ser movida se já pertencer à mesa
         if (this.transform.IsChildOf(GameObject.FindGameObjectWithTag("Table").transform))
         {

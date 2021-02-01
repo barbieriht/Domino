@@ -61,7 +61,7 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
             serverData.DistributeByArray(cardsToGive1, cardsToGive2, cardsToGive3, cardsToGive4);
         }
 
-        OrganizePlayerList();
+        serverData.AddFirstPlayer();
 
         //serverData.PrintAllPlayers();
     }
@@ -110,12 +110,6 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
         }
     }
 
-    public void OrganizePlayerList()
-    {
-        serverData.OrganizePlayerListpt1();
-        serverData.OrganizePlayerListpt2();
-
-    }
     public void AddPlayerOnList()
     {
         serverData.AddPlayer(PhotonNetwork.NickName);

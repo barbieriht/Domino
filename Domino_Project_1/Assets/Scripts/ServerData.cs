@@ -4,20 +4,21 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Pun.UtilityScripts;
+using UnityEngine.UI;
 
 public class ServerData : MonoBehaviourPun
 {
     public GameController gameController;
-
     public GameObject[] Pieces;
     public Transform tableTransform;
     public Transform playerHand;
+
+    public Text playerNickName;
 
     public bool isFirst = false;
     public int biggestBomb = 0;
     public int biggestGlobalBomb = 0;
     public int playerIndex = 0;
-    public int playersWithCards = 0;
 
     public static List<string> AllPlayers = new List<string>();
     public static List<string> AllPlayersOrganized = new List<string>();
@@ -36,6 +37,7 @@ public class ServerData : MonoBehaviourPun
         Pieces = GameObject.FindGameObjectsWithTag("FullPiece");
         tableTransform = GameObject.FindGameObjectWithTag("Table").transform;
         playerHand = GameObject.FindGameObjectWithTag("PlayerHand").transform;
+        playerNickName.text = PhotonNetwork.NickName;
     }
 
 
@@ -43,9 +45,9 @@ public class ServerData : MonoBehaviourPun
 
     public void AddOnListOrganized(string nick) => photonView.RPC("AddOnListOrganizedPUN", RpcTarget.All, nick);
 
-    public void AddMyBombs(int bomb) => photonView.RPC("AddMyBombsPUN", RpcTarget.All, bomb);
+    public void AddMyBombs(int bomb) => photonView.RPC("AddMyBombsPUN", RpcTarget.MasterClient, bomb);
 
-    public void SortBombs() => photonView.RPC("SortBombsPUN", RpcTarget.All);
+    public void SortBombs() => photonView.RPC("SortBombsPUN", RpcTarget.MasterClient);
 
     public void PrintAllPlayers() => photonView.RPC("PrintAllPlayersPUN", RpcTarget.All);
 
@@ -61,6 +63,9 @@ public class ServerData : MonoBehaviourPun
 
     public void DistributeByArray(int[] array1, int[] array2, int[] array3, int[] array4) => photonView.RPC("DistributeByArrayPUN", RpcTarget.All, array1, array2, array3, array4);
 
+    public void SetBiggestBomb(int bb) => photonView.RPC("SetBiggestBombPUN", RpcTarget.All, bb);
+
+    public void Select1stPlayer() => photonView.RPC("Select1stPlayerPUN", RpcTarget.All);
 
     public void SubtractCard() => photonView.RPC("SubtractCardPUN", RpcTarget.All);
 
@@ -70,7 +75,15 @@ public class ServerData : MonoBehaviourPun
 
     public void PrintAllBombs() => photonView.RPC("PrintAllBombsPUN", RpcTarget.All);
 
-    public void OrganizePlayerListpt1()
+    public void PrintText(string text) => photonView.RPC("PrintTextPUN", RpcTarget.MasterClient, text);
+
+    [PunRPC]
+    void PrintTextPUN(string text)
+    {
+        Debug.Log(text);
+    }
+
+    public void AddFirstPlayer()
     {
         if (isFirst)
             AddOnListOrganized(PhotonNetwork.NickName);
@@ -117,8 +130,20 @@ public class ServerData : MonoBehaviourPun
         AllBiggestBombs.Sort();
         //PrintAllBombs();
         biggestGlobalBomb = AllBiggestBombs[AllBiggestBombs.Count - 1];
-        Debug.Log("The biggest bomb is " + biggestGlobalBomb);
+        PrintText("The biggest bomb is " + biggestGlobalBomb);
+        SetBiggestBomb(biggestGlobalBomb);
+        Select1stPlayer();
+    }
 
+    [PunRPC]
+    void SetBiggestBombPUN(int bb)
+    {
+        biggestGlobalBomb = bb;
+    }
+
+    [PunRPC]
+    void Select1stPlayerPUN()
+    {
         foreach (Player player in PhotonNetwork.PlayerList)
         {
             if (player.NickName == PhotonNetwork.NickName)
@@ -126,11 +151,10 @@ public class ServerData : MonoBehaviourPun
                 if (biggestBomb == biggestGlobalBomb)
                 {
                     isFirst = true;
-                    Debug.Log(PhotonNetwork.NickName + " got the biggest bomb: " + biggestGlobalBomb);
+                    PrintText(PhotonNetwork.NickName + " got the biggest bomb: " + biggestGlobalBomb);
                 }
             }
         }
-
     }
 
     [PunRPC]
@@ -276,7 +300,7 @@ public class ServerData : MonoBehaviourPun
 
         if(playerIndex + 1 == PhotonNetwork.PlayerList.Length)
         {
-            Debug.Log("PlayersWithCards: " + playersWithCards + " & PlayerList.Length: " + PhotonNetwork.PlayerList.Length);
+            PrintText("PlayersWithCards: " + PhotonNetwork.PlayerList.Length);
             SortBombs();
         }
     }

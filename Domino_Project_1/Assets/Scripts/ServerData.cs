@@ -53,7 +53,7 @@ public class ServerData : MonoBehaviourPun
 
     public void SetPieceOff(string pieceName) => photonView.RPC("SetPieceOffPUN", RpcTarget.All, pieceName);
 
-    public void SetPieceOn(string namePiece, Vector3 position, Quaternion rotation, bool parent) => photonView.RPC("SetPieceOnPUN", RpcTarget.All, namePiece, position, rotation, parent);
+    public void SetPieceOn(string namePiece, Vector3 position, Quaternion rotation, bool parent) => photonView.RPC("SetPieceOnPUN", RpcTarget.Others, namePiece, position, rotation, parent);
 
     public void SavePickedPieces(int i, bool option) => photonView.RPC("SavePickedPiecesPUN", RpcTarget.All, i, option);
 
@@ -86,15 +86,18 @@ public class ServerData : MonoBehaviourPun
     public void AddFirstPlayer()
     {
         if (isFirst)
+        {
             AddOnListOrganized(PhotonNetwork.NickName);
-    }
 
-    public void OrganizePlayerListpt2()
-    {
-        if (!isFirst)
-            AddOnListOrganized(PhotonNetwork.NickName);
+            foreach(string nick in AllPlayers)
+            {
+                if(nick != PhotonNetwork.NickName)
+                {
+                    AddOnListOrganized(PhotonNetwork.NickName);
+                }
+            }
+        }
     }
-
 
     public int AddOnListOfCards()
     {

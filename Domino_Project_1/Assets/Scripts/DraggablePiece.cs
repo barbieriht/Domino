@@ -10,12 +10,26 @@ public class DraggablePiece : MonoBehaviour
     private Vector3 offset;
     public ServerData serverData;
 
+    public Transform TableTransform;
     void OnMouseDown()
     {
         screenPoint = Camera.main.WorldToScreenPoint(transform.position);
         offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
     }
 
+    /*public void FirstPick()
+    {
+        if(serverData.isFirst && isDouble && GetComponentInChildren<PieceBehaviour>().value == serverData.biggestGlobalBomb)
+        {
+            serverData.PrintText("Click!");
+            this.gameObject.transform.SetParent(TableTransform, true);
+            this.gameObject.transform.position = new Vector3(0, 0, 0);
+            this.gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
+
+            serverData.SetPieceOn(this.gameObject.name, this.gameObject.transform.position, this.gameObject.transform.rotation, true);
+
+        }
+    }*/
 
     void OnMouseDrag()
     {
@@ -27,7 +41,18 @@ public class DraggablePiece : MonoBehaviour
             return;
         }
 
-        
+        if (serverData.isFirst && isDouble && GetComponentInChildren<PieceBehaviour>().value == serverData.biggestGlobalBomb)
+        {
+            serverData.PrintText("Click!");
+            this.gameObject.transform.SetParent(TableTransform, true);
+            this.gameObject.transform.position = new Vector3(0, 0, 0);
+            this.gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
+
+            serverData.isFirst = false;
+            serverData.SetPieceOn(this.gameObject.name, this.gameObject.transform.position, this.gameObject.transform.rotation, true);
+            return;
+        }
+
         if (Input.GetMouseButtonDown(1))
         {
             this.transform.Rotate(0, 0, 90, Space.Self);
@@ -38,12 +63,6 @@ public class DraggablePiece : MonoBehaviour
         Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
         transform.position = curPosition;
     }
-    /*
-    private void OnMouseUp()
-    {
-        this.GetComponent<CollidersBehaviour>().isHolding = false;
-    }
-    */
 
     public void Destroy()
     {

@@ -7,7 +7,7 @@ public class CollidersBehaviour : MonoBehaviour
     private int value;
     private int otherValue;
     //private bool isBorder;
-    public bool canAttach;
+    public bool isPieceTip;
     public bool isHolding;
 
     public Collider2D HPieceCollider;
@@ -16,6 +16,7 @@ public class CollidersBehaviour : MonoBehaviour
     public Transform FullPiece;
     public ServerData serverData;
     public Transform TableTransform;
+    public GameController gameController;
 
     void Start()
     {
@@ -23,6 +24,7 @@ public class CollidersBehaviour : MonoBehaviour
         TableTransform = GameObject.FindGameObjectWithTag("Table").transform;
         FullPiece = this.transform.parent.transform.parent;
         serverData = GameObject.FindGameObjectWithTag("GameController").GetComponent<ServerData>();
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         value = GetComponentInParent<PieceBehaviour>().GetValue();
         //isBorder = GetComponentInParent<PieceBehaviour>().GetIsBorder();
         //isOnHand = transform.parent.GetComponentInParent<PieceBehaviour>().GetIsOnHand();
@@ -42,10 +44,10 @@ public class CollidersBehaviour : MonoBehaviour
         if (isHolding == true)
             return;
 
-        canAttach = !this.GetComponentInParent<HalfPiece>().halfPieceConnected;
+        isPieceTip = !this.GetComponentInParent<HalfPiece>().halfPieceConnected;
 
         //se ambos colisores são do "lado" da peça, elas não podem se juntar
-        if (!canAttach || !other.gameObject.GetComponent<CollidersBehaviour>().canAttach)
+        if (!isPieceTip && !other.gameObject.GetComponent<CollidersBehaviour>().isPieceTip)
             return;
 
         //se ambas as peças são da mão do jogador, não podem se juntar
@@ -55,7 +57,7 @@ public class CollidersBehaviour : MonoBehaviour
         //se o outro objeto tambem é borda
         if (!other.gameObject.GetComponentInParent<HalfPiece>().halfPieceConnected)
         {
-            Debug.Log(other.gameObject.name + " is a Border Piece");
+            //Debug.Log(other.gameObject.name + " is a Border Piece");
 
             //lê o valor da peça oposta
             otherValue = other.gameObject.GetComponent<CollidersBehaviour>().value;
@@ -63,7 +65,7 @@ public class CollidersBehaviour : MonoBehaviour
             //compara os valores
             if (otherValue == this.value)
             {
-                Debug.Log(other.gameObject.name + " got the same value: " + otherValue);
+                //Debug.Log(other.gameObject.name + " got the same value: " + otherValue);
 
                 //transforma o objeto atual em um "filho" da mesa
                 if(FullPiece.transform.parent == TableTransform)
@@ -72,6 +74,7 @@ public class CollidersBehaviour : MonoBehaviour
                 }
 
                 FullPiece.transform.SetParent(TableTransform, true);
+                gameController.thisPlayerAmountOfCards--;
                 serverData.SetPieceOn(FullPiece.name, FullPiece.position, FullPiece.rotation, true);
 
                 //faz com que as peças posicionadas não sejam mais consideradas bordas
@@ -79,15 +82,16 @@ public class CollidersBehaviour : MonoBehaviour
                 //other.GetComponentInParent<PieceBehaviour>().isBorder = false;
                 this.GetComponentInParent<HalfPiece>().halfPieceConnected = true;
                 other.GetComponentInParent<HalfPiece>().halfPieceConnected = true;
+                gameController.OnTurnCompleted();
             }
             else
             {
-                Debug.Log(other.gameObject.name + " got a different value: " + otherValue + " // this: " + value );
+                //Debug.Log(other.gameObject.name + " got a different value: " + otherValue + " // this: " + value );
             }
         }
         else
         {
-            Debug.Log(other.gameObject.name + " is not a Border Piece");
+            //Debug.Log(other.gameObject.name + " is not a Border Piece");
         }
     }
 }

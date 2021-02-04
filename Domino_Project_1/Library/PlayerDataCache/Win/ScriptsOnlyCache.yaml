@@ -110,23 +110,23 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 13152}
     - Class: 114
-      Script: {instanceID: 13610}
+      Script: {instanceID: 13608}
     - Class: 114
-      Script: {instanceID: 14244}
+      Script: {instanceID: 14242}
     - Class: 114
-      Script: {instanceID: 14264}
+      Script: {instanceID: 14262}
     - Class: 114
-      Script: {instanceID: 14624}
+      Script: {instanceID: 14622}
     - Class: 114
-      Script: {instanceID: 14754}
+      Script: {instanceID: 14752}
     - Class: 114
-      Script: {instanceID: 15324}
+      Script: {instanceID: 15322}
     - Class: 114
-      Script: {instanceID: 15344}
+      Script: {instanceID: 15342}
     - Class: 114
-      Script: {instanceID: 15472}
+      Script: {instanceID: 15470}
     - Class: 114
-      Script: {instanceID: 15548}
+      Script: {instanceID: 15546}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -217,55 +217,55 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 13494}
     - Class: 114
-      Script: {instanceID: 13610}
+      Script: {instanceID: 13608}
     - Class: 114
-      Script: {instanceID: 13926}
+      Script: {instanceID: 13924}
     - Class: 114
-      Script: {instanceID: 13990}
+      Script: {instanceID: 13988}
     - Class: 114
-      Script: {instanceID: 14016}
+      Script: {instanceID: 14014}
     - Class: 114
-      Script: {instanceID: 14028}
+      Script: {instanceID: 14026}
     - Class: 114
-      Script: {instanceID: 14150}
+      Script: {instanceID: 14148}
     - Class: 114
-      Script: {instanceID: 14168}
+      Script: {instanceID: 14166}
     - Class: 114
-      Script: {instanceID: 14190}
+      Script: {instanceID: 14188}
     - Class: 114
-      Script: {instanceID: 14216}
+      Script: {instanceID: 14214}
     - Class: 114
-      Script: {instanceID: 14244}
+      Script: {instanceID: 14242}
     - Class: 114
-      Script: {instanceID: 14264}
+      Script: {instanceID: 14262}
     - Class: 114
-      Script: {instanceID: 14392}
+      Script: {instanceID: 14390}
     - Class: 114
-      Script: {instanceID: 14510}
+      Script: {instanceID: 14508}
     - Class: 114
-      Script: {instanceID: 14546}
+      Script: {instanceID: 14544}
     - Class: 114
-      Script: {instanceID: 14558}
+      Script: {instanceID: 14556}
     - Class: 114
-      Script: {instanceID: 14624}
+      Script: {instanceID: 14622}
     - Class: 114
-      Script: {instanceID: 14738}
+      Script: {instanceID: 14736}
     - Class: 114
-      Script: {instanceID: 14754}
+      Script: {instanceID: 14752}
     - Class: 114
-      Script: {instanceID: 15324}
+      Script: {instanceID: 15322}
     - Class: 114
-      Script: {instanceID: 15344}
+      Script: {instanceID: 15342}
     - Class: 114
-      Script: {instanceID: 15398}
+      Script: {instanceID: 15396}
     - Class: 114
-      Script: {instanceID: 15404}
+      Script: {instanceID: 15402}
     - Class: 114
-      Script: {instanceID: 15514}
+      Script: {instanceID: 15512}
     - Class: 114
-      Script: {instanceID: 15548}
+      Script: {instanceID: 15546}
     - Class: 114
-      Script: {instanceID: 15588}
+      Script: {instanceID: 15586}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 124
@@ -583,7 +583,7 @@ ScriptsOnlyBuild:
     className: SpriteShapeGeometryCache
   - hash:
       serializedVersion: 2
-      Hash: c8459ca788ea1a772b4163210e621fd5
+      Hash: af4a5309ce34013a439722e6508eb74f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameController
@@ -871,7 +871,7 @@ ScriptsOnlyBuild:
     className: CurrentRoomPlayerTtlProperty
   - hash:
       serializedVersion: 2
-      Hash: 05737b50130fcbdeed66c90c35eceda4
+      Hash: 9e525afbed1866f97cebee0efc40e8fa
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ServerData
@@ -1321,7 +1321,7 @@ ScriptsOnlyBuild:
     className: OnJoinedInstantiate
   - hash:
       serializedVersion: 2
-      Hash: 86df120810a79ba235f79ab55e187239
+      Hash: 59802ab37b09f27b37a84fc7c77e5a39
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: DraggablePiece
@@ -1675,7 +1675,7 @@ ScriptsOnlyBuild:
     className: BoolInputField
   - hash:
       serializedVersion: 2
-      Hash: 7c17134183737e6e6b43e3c2e4746894
+      Hash: 2128002bb5f04006812cfc42e9b1a9d6
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: CollidersBehaviour

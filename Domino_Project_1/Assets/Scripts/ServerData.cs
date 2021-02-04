@@ -14,23 +14,22 @@ public class ServerData : MonoBehaviourPun
     public Transform playerHand;
 
     public Text playerNickName;
+    public Text roundNumberTxt;
 
     public bool isFirst = false;
     public int biggestBomb = 0;
     public int biggestGlobalBomb = 0;
     public int playerIndex = 0;
+    public int RoundNumber;
+
+    public string playerRound;
 
     public static List<string> AllPlayers = new List<string>();
     public static List<string> AllPlayersOrganized = new List<string>();
     public static List<int> CardsAlreadyGived = new List<int>();
     public static List<int> AllBiggestBombs = new List<int>();
+    public static List<int> AvailabePieces = new List<int>();
 
-
-    public int RoundNumber
-    {
-        get => this.RoundNumber;
-        set => this.photonView.RPC("RpcSetRoundNumber", RpcTarget.All, (object)value);
-    }
 
     private void Start()
     {
@@ -38,8 +37,10 @@ public class ServerData : MonoBehaviourPun
         tableTransform = GameObject.FindGameObjectWithTag("Table").transform;
         playerHand = GameObject.FindGameObjectWithTag("PlayerHand").transform;
         playerNickName.text = PhotonNetwork.NickName;
-    }
 
+        RoundNumber = 1;
+        roundNumberTxt.text = "Round: " + RoundNumber.ToString();
+    }
 
     public void AddPlayer(string thisNickName) => photonView.RPC("AddPlayerPUN", RpcTarget.All, thisNickName);
 
@@ -55,13 +56,17 @@ public class ServerData : MonoBehaviourPun
 
     public void SetPieceOn(string namePiece, Vector3 position, Quaternion rotation, bool parent) => photonView.RPC("SetPieceOnPUN", RpcTarget.Others, namePiece, position, rotation, parent);
 
-    public void SavePickedPieces(int i, bool option) => photonView.RPC("SavePickedPiecesPUN", RpcTarget.All, i, option);
+    public void SavePickedPieces(int i, bool option) => photonView.RPC("SavePickedPiecesPUN", RpcTarget.Others, i, option);
 
     public void SavePlayersData(string playerNick, int amountPieces) => photonView.RPC("SavePlayersDataPUN", RpcTarget.All, playerNick, amountPieces);
 
     //public void Distribute() => photonView.RPC("DistributePUN", RpcTarget.All);
 
+    public void SetRoundNumber(int value) => photonView.RPC("SetRoundNumberPUN", RpcTarget.All, value);
+
     public void DistributeByArray(int[] array1, int[] array2, int[] array3, int[] array4) => photonView.RPC("DistributeByArrayPUN", RpcTarget.All, array1, array2, array3, array4);
+
+    public void ValuesToPut(int newValue, int oldValue) => photonView.RPC("ValuesToPutPUN", RpcTarget.All, newValue, oldValue);
 
     public void SetBiggestBomb(int bb) => photonView.RPC("SetBiggestBombPUN", RpcTarget.All, bb);
 
@@ -77,26 +82,23 @@ public class ServerData : MonoBehaviourPun
 
     public void PrintText(string text) => photonView.RPC("PrintTextPUN", RpcTarget.MasterClient, text);
 
-    [PunRPC]
-    void PrintTextPUN(string text)
-    {
-        Debug.Log(text);
-    }
+    
 
     public void AddFirstPlayer()
     {
-        if (isFirst)
-        {
-            AddOnListOrganized(PhotonNetwork.NickName);
+        PrintText(PhotonNetwork.NickName + " 1st");
 
-            foreach(string nick in AllPlayers)
+        AddOnListOrganized(PhotonNetwork.NickName);
+
+        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+        {
+            if (PhotonNetwork.PlayerList[i].NickName != PhotonNetwork.NickName)
             {
-                if(nick != PhotonNetwork.NickName)
-                {
-                    AddOnListOrganized(PhotonNetwork.NickName);
-                }
+                AddOnListOrganized(PhotonNetwork.PlayerList[i].NickName);
             }
         }
+
+        //PrintAllPlayers();
     }
 
     public int AddOnListOfCards()
@@ -119,6 +121,34 @@ public class ServerData : MonoBehaviourPun
         return number;
     }
 
+    public bool IsMyTurn()
+    {
+        if(PhotonNetwork.NickName == AllPlayersOrganized[(RoundNumber - 1)%PhotonNetwork.PlayerList.Length])
+            return true;
+        return false;
+    }
+
+    [PunRPC]
+    void ValuesToPutPUN(int newValue, int oldValue)
+    {
+        int index = 0;
+        if(AvailabePieces == null)
+        {
+            AvailabePieces.Add(newValue);
+            AvailabePieces.Add(newValue);
+            return;
+        }
+
+        foreach (int value in AvailabePieces)
+        {
+            if (value == oldValue)
+                AvailabePieces.Remove(index);
+            index++;
+            break;
+        }
+
+        AvailabePieces.Add(newValue);
+    }
 
     [PunRPC]
     void AddMyBombsPUN(int bomb)
@@ -147,16 +177,11 @@ public class ServerData : MonoBehaviourPun
     [PunRPC]
     void Select1stPlayerPUN()
     {
-        foreach (Player player in PhotonNetwork.PlayerList)
+        if (biggestBomb == biggestGlobalBomb)
         {
-            if (player.NickName == PhotonNetwork.NickName)
-            {
-                if (biggestBomb == biggestGlobalBomb)
-                {
-                    isFirst = true;
-                    PrintText(PhotonNetwork.NickName + " got the biggest bomb: " + biggestGlobalBomb);
-                }
-            }
+            isFirst = true;
+            PrintText(PhotonNetwork.NickName + " got the biggest bomb: " + biggestGlobalBomb);
+            AddFirstPlayer();
         }
     }
 
@@ -186,6 +211,7 @@ public class ServerData : MonoBehaviourPun
     void AddOnListOrganizedPUN(string nick)
     {
         AllPlayersOrganized.Add(nick);
+        //PrintText("Added: " + nick);
     }
 
 
@@ -219,14 +245,20 @@ public class ServerData : MonoBehaviourPun
     [PunRPC]
     void PrintAllPlayersPUN()
     {
-        foreach (string thisNickName in AllPlayers)
+        foreach (string thisNickName in AllPlayersOrganized)
         {
-
-            Debug.Log("NickName = " + thisNickName + " Bomb: " + this.biggestBomb);
-
+            if(thisNickName == PhotonNetwork.NickName)
+                PrintText("NickName = " + thisNickName + " Bomb: " + this.biggestBomb);
         }
     }
 
+    [PunRPC]
+    void SetRoundNumberPUN(int value)
+    {
+        //PrintText("Mudou de round");
+        RoundNumber = value;
+        gameController.OnTurnBegins();
+    }
 
     [PunRPC]
     void SetPieceOnPUN(string namePiece, Vector3 position, Quaternion rotation, bool parent)
@@ -341,6 +373,12 @@ public class ServerData : MonoBehaviourPun
                 player.PiecesAmount(amountPieces, true);
             }
         }
+    }
+
+    [PunRPC]
+    void PrintTextPUN(string text)
+    {
+        Debug.Log(text);
     }
 
 }

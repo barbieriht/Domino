@@ -6,27 +6,26 @@ using Photon.Pun;
 using Photon.Realtime;
 using Photon.Pun.UtilityScripts;
 
-public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
+public class GameController : MonoBehaviourPun
 {
     public GameObject[] Pieces;
-    [SerializeField]
 
     public bool[] fullDeck;
 
-    public int[] allCards = new int[28];
-    public int[] cardsToGive1 = new int[7];
-    public int[] cardsToGive2 = new int[7];
-    public int[] cardsToGive3 = new int[7];
-    public int[] cardsToGive4 = new int[7];
+    private int[] allCards = new int[28];
+    private int[] cardsToGive1 = new int[7];
+    private int[] cardsToGive2 = new int[7];
+    private int[] cardsToGive3 = new int[7];
+    private int[] cardsToGive4 = new int[7];
 
+    private float timeToPlay;
+
+    public static List<int> AllAvailableValues = new List<int>();
 
     public int amountOfCards = 28;
+    public int thisPlayerAmountOfCards = 7;
+
     public ServerData serverData;
-
-    
-    //PlayerController playerController;
-
-    //private GameObject FirstPiece;
 
     private GameObject Table;
     private Transform playerHand;
@@ -55,16 +54,16 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
         */
 
         AddPlayerOnList();
+
         if (PhotonNetwork.IsMasterClient)
         {
             DistributeByArrays();
             serverData.DistributeByArray(cardsToGive1, cardsToGive2, cardsToGive3, cardsToGive4);
         }
 
-        serverData.AddFirstPlayer();
-
         //serverData.PrintAllPlayers();
     }
+
 
     public void DistributeByArrays()
     {
@@ -73,7 +72,7 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
             allCards[i] = i;
         }
 
-        embaralhar(allCards);
+        Shuffle(allCards);
 
         for(int j = 0; j < 4; j++)
         {
@@ -98,12 +97,12 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
         }
     }
 
-    static void embaralhar(int[] lista)
+    public void Shuffle(int[] lista)
     {
 
         for (int i = 0; i < lista.Length; i++)
         {
-            int a = Random.Range(0, 10000) % 28;
+            int a = RandomValue();
             int temp = lista[i];
             lista[i] = lista[a];
             lista[a] = temp;
@@ -116,6 +115,20 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
         //serverData.AddPlayerPC(playerController);
     }
 
+    public int RandomValue()
+    {
+        return (Random.Range(0, 10000) % 28);
+    }
+
+    public int RandomPiece()
+    {
+        int x;
+        x = (Random.Range(0, 10000) % 28);
+
+        if (!fullDeck[x])
+            return x;
+        return (RandomPiece());
+    }
 
     public void TurnPieceVisible(int j, int index)
     {
@@ -146,10 +159,46 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
                 serverData.biggestBomb = Pieces[j].GetComponentInChildren<PieceBehaviour>().value;
         }
 
+        for(int k = 0; k < 2; k++)
+            AllAvailableValues.Add(Pieces[j].GetComponent<DraggablePiece>().ValuesInThisPiece[k]);
 
         serverData.SubtractCard();
+
+        fullDeck[j] = true;
         serverData.SavePickedPieces(j, true);
         //serverData.PrintInformationTest(PhotonNetwork.NickName, j, amountOfCards, index);
+    }
+
+    public void PickAPiece()
+    {
+        if (amountOfCards <= 0)
+            return;
+
+        int j = RandomPiece();
+
+        GameObject thisPiece = Pieces[j];
+
+        //serverData.PrintText("Sorteada: " + j);
+
+        if (thisPiece == null)
+            Debug.LogError("thisPiece deu ruim");
+
+        thisPiece.transform.SetParent(playerHand, true);
+      
+        for (int k = 0; k < 2; k++)
+            AllAvailableValues.Add(Pieces[j].GetComponent<DraggablePiece>().ValuesInThisPiece[k]);
+
+        serverData.SubtractCard();
+
+        fullDeck[j] = true;
+        serverData.SavePickedPieces(j, true);
+
+        if(amountOfCards == 0)
+        {
+            //ativar o botão de passar a rodada
+        }
+
+        thisPlayerAmountOfCards++;
     }
 
     private void ResetCards(bool[] deck)
@@ -160,28 +209,54 @@ public class GameController : MonoBehaviourPun, IPunTurnManagerCallbacks
         }
     }
 
-    void IPunTurnManagerCallbacks.OnTurnBegins(int turn)
+    public void OnTurnBegins()
     {
+        timeToPlay = 30;
 
+        //serverData.PrintText("Iniciou o round: " + serverData.RoundNumber);
+
+        serverData.roundNumberTxt.text = "Round: " + serverData.RoundNumber.ToString();
+
+        if (!serverData.IsMyTurn())
+        {
+            //mostrar de quem é o turno
+        }
+        else
+        {
+            if(serverData.RoundNumber == 1)
+            {
+                //destacar a maior bomba
+            }
+            //mostrar que é meu turno
+            //ativar o botão de comprar cartas
+            //atualizar as cartas que podem ser colocadas
+            //destacar as minhas cartas que podem ser jogadas
+        }
     }
 
-    void IPunTurnManagerCallbacks.OnTurnCompleted(int turn)
+    public void OnTurnCompleted()
     {
 
+        if (thisPlayerAmountOfCards == 0)
+        {
+            OnPlayerWin(PhotonNetwork.NickName);
+        }
+
+        serverData.SetRoundNumber(serverData.RoundNumber + 1);
     }
 
-    void IPunTurnManagerCallbacks.OnPlayerMove(Player player, int turn, object move)
+    public void OnTurnTimeEnds()
     {
-
+        serverData.SetRoundNumber(serverData.RoundNumber + 1);
     }
 
-    void IPunTurnManagerCallbacks.OnPlayerFinished(Player player, int turn, object move)
+    public void OnPlayerWin(string nick)
     {
-
+        //finalizar o jogo
     }
 
-    void IPunTurnManagerCallbacks.OnTurnTimeEnds(int turn)
+    public void OnPiecesOver()
     {
-
+        //finalizar o jogo
     }
 }

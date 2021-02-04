@@ -5,6 +5,8 @@ using UnityEngine;
 public class CollidersBehaviour : MonoBehaviour
 {
     private int value;
+    private int otherValueOfThis;
+
     private int otherValue;
     //private bool isBorder;
     public bool isPieceTip;
@@ -75,13 +77,28 @@ public class CollidersBehaviour : MonoBehaviour
 
                 FullPiece.transform.SetParent(TableTransform, true);
                 gameController.thisPlayerAmountOfCards--;
-                serverData.SetPieceOn(FullPiece.name, FullPiece.position, FullPiece.rotation, true);
+                serverData.SetPieceOn(FullPiece.name, FullPiece.position, TableTransform.position, FullPiece.rotation, true);
 
                 //faz com que as peças posicionadas não sejam mais consideradas bordas
                 //this.GetComponentInParent<PieceBehaviour>().isBorder = false;
                 //other.GetComponentInParent<PieceBehaviour>().isBorder = false;
                 this.GetComponentInParent<HalfPiece>().halfPieceConnected = true;
                 other.GetComponentInParent<HalfPiece>().halfPieceConnected = true;
+
+                for(int i = 0; i < 2; i++)
+                {
+                    if (GetComponentInParent<DraggablePiece>().ValuesInThisPiece[i] != value)
+                    {
+                        otherValueOfThis = GetComponentInParent<DraggablePiece>().ValuesInThisPiece[i];
+                    }
+
+                }
+
+                if (GetComponentInParent<DraggablePiece>().isDouble)
+                    otherValueOfThis = value;
+
+                serverData.ValuesToPut(otherValueOfThis, value);
+
                 gameController.OnTurnCompleted();
             }
             else

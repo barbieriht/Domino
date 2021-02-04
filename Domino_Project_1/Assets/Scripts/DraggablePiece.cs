@@ -17,9 +17,14 @@ public class DraggablePiece : MonoBehaviour
 
     public int[] ValuesInThisPiece = new int[2];
 
+    public Renderer pieceColor;
+    public Color availablePieceColor;
 
     private void Start()
     {
+        availablePieceColor = new Color(124, 195, 135, 255);
+        pieceColor = GetComponent<Renderer>();
+
         int index = 0;
         foreach(PieceBehaviour piece in GetComponentsInChildren<PieceBehaviour>())
         {
@@ -65,13 +70,31 @@ public class DraggablePiece : MonoBehaviour
             this.gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
 
             serverData.isFirst = false;
-            serverData.SetPieceOn(this.gameObject.name, this.gameObject.transform.position, this.gameObject.transform.rotation, true);
-            serverData.ValuesToPut(GetComponentInChildren<PieceBehaviour>().value, 0);
+            serverData.SetPieceOn(this.gameObject.name, this.gameObject.transform.position, TableTransform.position, this.gameObject.transform.rotation, true);
+            serverData.ValuesToPut(GetComponentInChildren<PieceBehaviour>().value, GetComponentInChildren<PieceBehaviour>().value);
 
             gameController.OnTurnCompleted();
             //serverData.PrintText("Vai começar o round 2");
             return;
         } 
+    }
+
+    public void ChangeColor()
+    {
+        for(int i = 0; i < 2; i++)
+        {
+            for(int j = 0; j < 2; j++)
+            {
+                if(ValuesInThisPiece[i] == serverData.AvailablePieces[j])
+                    pieceColor.material.color = availablePieceColor;
+            }
+        }
+    }
+
+    public void ReturnToWhite()
+    {
+        pieceColor.material.color = Color.white;
+
     }
 
     public void Destroy()

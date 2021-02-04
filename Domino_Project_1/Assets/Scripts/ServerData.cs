@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.UI;
+
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Pun.UtilityScripts;
-using UnityEngine.UI;
 
 public class ServerData : MonoBehaviourPun
 {
@@ -22,13 +24,15 @@ public class ServerData : MonoBehaviourPun
     public int playerIndex = 0;
     public int RoundNumber;
 
-    public string playerRound;
+    public string playerTurn;
 
     public static List<string> AllPlayers = new List<string>();
     public static List<string> AllPlayersOrganized = new List<string>();
     public static List<int> CardsAlreadyGived = new List<int>();
     public static List<int> AllBiggestBombs = new List<int>();
-    public static List<int> AvailabePieces = new List<int>();
+    
+    [SerializeField]
+    public List<int> AvailablePieces = new List<int>();
 
 
     private void Start()
@@ -54,7 +58,7 @@ public class ServerData : MonoBehaviourPun
 
     public void SetPieceOff(string pieceName) => photonView.RPC("SetPieceOffPUN", RpcTarget.All, pieceName);
 
-    public void SetPieceOn(string namePiece, Vector3 position, Quaternion rotation, bool parent) => photonView.RPC("SetPieceOnPUN", RpcTarget.Others, namePiece, position, rotation, parent);
+    public void SetPieceOn(string namePiece, Vector3 position, Vector3 tablePosition, Quaternion rotation, bool parent) => photonView.RPC("SetPieceOnPUN", RpcTarget.Others, namePiece, position, tablePosition, rotation, parent);
 
     public void SavePickedPieces(int i, bool option) => photonView.RPC("SavePickedPiecesPUN", RpcTarget.Others, i, option);
 
@@ -98,6 +102,7 @@ public class ServerData : MonoBehaviourPun
             }
         }
 
+        //gameController.OnTurnBegins();
         //PrintAllPlayers();
     }
 
@@ -132,22 +137,24 @@ public class ServerData : MonoBehaviourPun
     void ValuesToPutPUN(int newValue, int oldValue)
     {
         int index = 0;
-        if(AvailabePieces == null)
+        if(AvailablePieces.Count == 0)
         {
-            AvailabePieces.Add(newValue);
-            AvailabePieces.Add(newValue);
-            return;
+            AvailablePieces.Add(newValue);
+            AvailablePieces.Add(newValue);
         }
 
-        foreach (int value in AvailabePieces)
+        foreach (int value in AvailablePieces)
         {
             if (value == oldValue)
-                AvailabePieces.Remove(index);
+            {
+                //PrintText("Colocou: " + oldValue + " Sobrou: " + value);
+                //PrintText("Remover: " + AvailablePieces[index] + " Add: " + newValue);
+                AvailablePieces.RemoveAt(index);
+                AvailablePieces.Add(newValue);
+                return;
+            }
             index++;
-            break;
         }
-
-        AvailabePieces.Add(newValue);
     }
 
     [PunRPC]
@@ -261,14 +268,14 @@ public class ServerData : MonoBehaviourPun
     }
 
     [PunRPC]
-    void SetPieceOnPUN(string namePiece, Vector3 position, Quaternion rotation, bool parent)
+    void SetPieceOnPUN(string namePiece, Vector3 position, Vector3 tablePosition, Quaternion rotation, bool parent)
     {
         GameObject thisPiece = GameObject.Find(namePiece);
         if (parent)
             thisPiece.transform.SetParent(tableTransform, true);
         else
             thisPiece.transform.SetParent(playerHand, true);
-        thisPiece.transform.position = position;
+        thisPiece.transform.position = position + tableTransform.position - tablePosition;
         thisPiece.transform.rotation = rotation;
     }
 

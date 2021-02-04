@@ -75,6 +75,7 @@
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\OnStartDelete.cs" />
     <Compile Include="Assets\Scripts\HalfPiece.cs" />
     <Compile Include="Assets\Scripts\CollidersBehaviour.cs" />
+    <Compile Include="Assets\Scripts\DraggableTable.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.xml" />

@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using UnityEngine;
+using UnityEngine.UI;
+
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Pun.UtilityScripts;
@@ -30,6 +33,8 @@ public class GameController : MonoBehaviourPun
     private GameObject Table;
     private Transform playerHand;
 
+    public Button buyButton;
+    public Button passButton;
 
     private void Start()
     {
@@ -219,13 +224,19 @@ public class GameController : MonoBehaviourPun
 
         if (!serverData.IsMyTurn())
         {
+            buyButton.gameObject.SetActive(false);
+            passButton.gameObject.SetActive(false);
+
             //mostrar de quem é o turno
         }
         else
         {
-            if(serverData.RoundNumber == 1)
+            buyButton.gameObject.SetActive(true);
+            passButton.gameObject.SetActive(true);
+
+            if (serverData.RoundNumber == 1)
             {
-                //destacar a maior bomba
+                
             }
             //mostrar que é meu turno
             //ativar o botão de comprar cartas
@@ -236,6 +247,12 @@ public class GameController : MonoBehaviourPun
 
     public void OnTurnCompleted()
     {
+        /*
+        foreach (GameObject pieces in playerHand)
+        {
+            pieces.GetComponent<DraggablePiece>().ReturnToWhite();
+        }
+        */
 
         if (thisPlayerAmountOfCards == 0)
         {

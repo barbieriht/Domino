@@ -13,6 +13,8 @@ public class GameController : MonoBehaviourPun
 {
     public GameObject[] Pieces;
 
+    public bool isGameFinished = false;
+
     public bool[] fullDeck;
 
     private int[] allCards = new int[28];
@@ -33,6 +35,9 @@ public class GameController : MonoBehaviourPun
     private GameObject Table;
     private Transform playerHand;
 
+    public Text FirstPlayerTxT;
+    public Text WinnerTxT;
+    public Image WinnerImage;
     public Button buyButton;
     public Button passButton;
 
@@ -52,11 +57,6 @@ public class GameController : MonoBehaviourPun
 
 
         //serverData.PrintAllPlayers();
-
-        /*
-        if (PhotonNetwork.IsMasterClient)
-            serverData.Distribute();
-        */
 
         AddPlayerOnList();
 
@@ -188,6 +188,11 @@ public class GameController : MonoBehaviourPun
         if (thisPiece == null)
             Debug.LogError("thisPiece deu ruim");
 
+        if(thisPiece.GetComponent<DraggablePiece>().ChangeColor() > 0)
+        {
+            buyButton.gameObject.SetActive(false);
+        }
+
         thisPiece.transform.SetParent(playerHand, true);
       
         for (int k = 0; k < 2; k++)
@@ -200,7 +205,8 @@ public class GameController : MonoBehaviourPun
 
         if(amountOfCards == 0)
         {
-            //ativar o botão de passar a rodada
+            passButton.gameObject.SetActive(true);
+            buyButton.gameObject.SetActive(false);
         }
 
         thisPlayerAmountOfCards++;
@@ -218,6 +224,9 @@ public class GameController : MonoBehaviourPun
     {
         timeToPlay = 30;
 
+        if (serverData.RoundNumber == 2)
+            FirstPlayerTxT.gameObject.SetActive(false);
+
         //serverData.PrintText("Iniciou o round: " + serverData.RoundNumber);
 
         serverData.roundNumberTxt.text = "Round: " + serverData.RoundNumber.ToString();
@@ -231,28 +240,27 @@ public class GameController : MonoBehaviourPun
         }
         else
         {
-            buyButton.gameObject.SetActive(true);
-            passButton.gameObject.SetActive(true);
+            int aux = 0;
 
-            if (serverData.RoundNumber == 1)
+            foreach(DraggablePiece pieces in playerHand.GetComponentsInChildren<DraggablePiece>())
             {
-                
+                aux = aux + pieces.ChangeColor();
+            }
+
+            if (aux == 0)
+            {
+                buyButton.gameObject.SetActive(true);
             }
             //mostrar que é meu turno
-            //ativar o botão de comprar cartas
-            //atualizar as cartas que podem ser colocadas
-            //destacar as minhas cartas que podem ser jogadas
         }
     }
 
     public void OnTurnCompleted()
     {
-        /*
-        foreach (GameObject pieces in playerHand)
+        foreach (DraggablePiece pieces in playerHand.GetComponentsInChildren<DraggablePiece>())
         {
-            pieces.GetComponent<DraggablePiece>().ReturnToWhite();
+            pieces.ReturnToWhite();
         }
-        */
 
         if (thisPlayerAmountOfCards == 0)
         {
@@ -269,7 +277,7 @@ public class GameController : MonoBehaviourPun
 
     public void OnPlayerWin(string nick)
     {
-        //finalizar o jogo
+        serverData.TheWinner(nick);
     }
 
     public void OnPiecesOver()

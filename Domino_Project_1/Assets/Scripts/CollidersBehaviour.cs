@@ -10,7 +10,6 @@ public class CollidersBehaviour : MonoBehaviour
     private int otherValue;
     //private bool isBorder;
     public bool isPieceTip;
-    public bool isHolding;
 
     public Collider2D HPieceCollider;
 
@@ -43,14 +42,10 @@ public class CollidersBehaviour : MonoBehaviour
             return;
         }
 
-        if (isHolding == true)
-            return;
-
-        isPieceTip = !this.GetComponentInParent<HalfPiece>().halfPieceConnected;
-
         //se ambos colisores são do "lado" da peça, elas não podem se juntar
-        if (!isPieceTip && !other.gameObject.GetComponent<CollidersBehaviour>().isPieceTip)
+        if (!isPieceTip && !other.GetComponent<CollidersBehaviour>().isPieceTip)
             return;
+
 
         //se ambas as peças são da mão do jogador, não podem se juntar
         if (FullPiece.transform.parent == other.GetComponent<CollidersBehaviour>().FullPiece.transform.parent)
@@ -75,6 +70,10 @@ public class CollidersBehaviour : MonoBehaviour
                     return;
                 }
 
+                Vector3 distance = this.transform.position - other.transform.position;
+
+                FullPiece.transform.position -= distance;
+
                 FullPiece.transform.SetParent(TableTransform, true);
                 gameController.thisPlayerAmountOfCards--;
                 serverData.SetPieceOn(FullPiece.name, FullPiece.position, TableTransform.position, FullPiece.rotation, true);
@@ -98,6 +97,8 @@ public class CollidersBehaviour : MonoBehaviour
                     otherValueOfThis = value;
 
                 serverData.ValuesToPut(otherValueOfThis, value);
+
+                this.FullPiece.GetComponent<DraggablePiece>().ReturnToWhite();
 
                 gameController.OnTurnCompleted();
             }

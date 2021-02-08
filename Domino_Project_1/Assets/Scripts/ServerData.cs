@@ -64,8 +64,6 @@ public class ServerData : MonoBehaviourPun
 
     public void SavePlayersData(string playerNick, int amountPieces) => photonView.RPC("SavePlayersDataPUN", RpcTarget.All, playerNick, amountPieces);
 
-    //public void Distribute() => photonView.RPC("DistributePUN", RpcTarget.All);
-
     public void SetRoundNumber(int value) => photonView.RPC("SetRoundNumberPUN", RpcTarget.All, value);
 
     public void DistributeByArray(int[] array1, int[] array2, int[] array3, int[] array4) => photonView.RPC("DistributeByArrayPUN", RpcTarget.All, array1, array2, array3, array4);
@@ -86,11 +84,12 @@ public class ServerData : MonoBehaviourPun
 
     public void PrintText(string text) => photonView.RPC("PrintTextPUN", RpcTarget.MasterClient, text);
 
+    public void TheWinner(string nick) => photonView.RPC("TheWinnerPUN", RpcTarget.All, nick);
     
 
     public void AddFirstPlayer()
     {
-        PrintText(PhotonNetwork.NickName + " 1st");
+        //PrintText(PhotonNetwork.NickName + " 1st");
 
         AddOnListOrganized(PhotonNetwork.NickName);
 
@@ -170,7 +169,7 @@ public class ServerData : MonoBehaviourPun
         AllBiggestBombs.Sort();
         //PrintAllBombs();
         biggestGlobalBomb = AllBiggestBombs[AllBiggestBombs.Count - 1];
-        PrintText("The biggest bomb is " + biggestGlobalBomb);
+        //PrintText("The biggest bomb is " + biggestGlobalBomb);
         SetBiggestBomb(biggestGlobalBomb);
         Select1stPlayer();
     }
@@ -187,7 +186,7 @@ public class ServerData : MonoBehaviourPun
         if (biggestBomb == biggestGlobalBomb)
         {
             isFirst = true;
-            PrintText(PhotonNetwork.NickName + " got the biggest bomb: " + biggestGlobalBomb);
+            //PrintText(PhotonNetwork.NickName + " got the biggest bomb: " + biggestGlobalBomb);
             AddFirstPlayer();
         }
     }
@@ -279,24 +278,6 @@ public class ServerData : MonoBehaviourPun
         thisPiece.transform.rotation = rotation;
     }
 
-    /*
-    [PunRPC]
-    void DistributePUN()
-    {
-        foreach (string thisNickName in AllPlayers)
-        {
-            if (thisNickName != PhotonNetwork.NickName)
-                return;
-
-            for (int k = 0; k < 7; k++)
-            {
-                if (gameController == null)
-                    Debug.LogError("gamecontroller fudeu");
-                gameController.TurnPieceVisible();
-            }
-        }
-    }
-    */
 
     [PunRPC]
     void DistributeByArrayPUN(int[] array1, int[] array2, int[] array3, int[] array4)
@@ -342,7 +323,7 @@ public class ServerData : MonoBehaviourPun
 
         if(playerIndex + 1 == PhotonNetwork.PlayerList.Length)
         {
-            PrintText("PlayersWithCards: " + PhotonNetwork.PlayerList.Length);
+            //PrintText("PlayersWithCards: " + PhotonNetwork.PlayerList.Length);
             SortBombs();
         }
     }
@@ -371,15 +352,11 @@ public class ServerData : MonoBehaviourPun
 
 
     [PunRPC]
-    void SavePlayersDataPUN(string playerNick, int amountPieces)
+    void TheWinnerPUN(string nickname)
     {
-        foreach(Player player in PhotonNetwork.PlayerList)
-        {
-            if(player.NickName == playerNick)
-            {
-                player.PiecesAmount(amountPieces, true);
-            }
-        }
+        gameController.WinnerTxT.text = nickname + "is The Winner!!";
+        gameController.WinnerImage.gameObject.SetActive(true);
+        gameController.isGameFinished = true;
     }
 
     [PunRPC]

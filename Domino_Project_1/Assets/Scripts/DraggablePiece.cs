@@ -18,11 +18,9 @@ public class DraggablePiece : MonoBehaviour
     public int[] ValuesInThisPiece = new int[2];
 
     public Renderer pieceColor;
-    public Color availablePieceColor;
 
     private void Start()
     {
-        availablePieceColor = new Color(124, 195, 135, 255);
         pieceColor = GetComponent<Renderer>();
 
         int index = 0;
@@ -52,6 +50,9 @@ public class DraggablePiece : MonoBehaviour
             return;
         }
 
+        if (gameController.isGameFinished)
+            return;
+
         if (Input.GetMouseButtonDown(1))
         {
             this.transform.Rotate(0, 0, 90, Space.Self);
@@ -70,6 +71,7 @@ public class DraggablePiece : MonoBehaviour
             this.gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
 
             serverData.isFirst = false;
+            gameController.thisPlayerAmountOfCards--;
             serverData.SetPieceOn(this.gameObject.name, this.gameObject.transform.position, TableTransform.position, this.gameObject.transform.rotation, true);
             serverData.ValuesToPut(GetComponentInChildren<PieceBehaviour>().value, GetComponentInChildren<PieceBehaviour>().value);
 
@@ -79,16 +81,23 @@ public class DraggablePiece : MonoBehaviour
         } 
     }
 
-    public void ChangeColor()
+    public int ChangeColor()
     {
+        int qtd = 0;
+
         for(int i = 0; i < 2; i++)
         {
             for(int j = 0; j < 2; j++)
             {
                 if(ValuesInThisPiece[i] == serverData.AvailablePieces[j])
-                    pieceColor.material.color = availablePieceColor;
+                {
+                    pieceColor.material.color = Color.green;
+                    qtd++;
+                }
             }
         }
+
+        return qtd;
     }
 
     public void ReturnToWhite()

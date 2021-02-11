@@ -23,14 +23,13 @@ public class GameController : MonoBehaviourPun
     private int[] cardsToGive3 = new int[7];
     private int[] cardsToGive4 = new int[7];
 
-    private float timeToPlay;
-
     public static List<int> AllAvailableValues = new List<int>();
 
     public int amountOfCards = 28;
     public int thisPlayerAmountOfCards = 7;
 
     public ServerData serverData;
+    public ChatBehaviour chatBehaviour;
 
     private GameObject Table;
     private Transform playerHand;
@@ -222,7 +221,6 @@ public class GameController : MonoBehaviourPun
 
     public void OnTurnBegins()
     {
-        timeToPlay = 30;
 
         if (serverData.RoundNumber == 2)
             FirstPlayerTxT.gameObject.SetActive(false);
@@ -240,6 +238,9 @@ public class GameController : MonoBehaviourPun
         }
         else
         {
+            if(serverData.RoundNumber != 1)
+                chatBehaviour.SendMessageToChat(PhotonNetwork.NickName + " turn.", Message.MessageType.info);
+
             int aux = 0;
 
             foreach(DraggablePiece pieces in playerHand.GetComponentsInChildren<DraggablePiece>())
@@ -257,6 +258,11 @@ public class GameController : MonoBehaviourPun
 
     public void OnTurnCompleted()
     {
+        if(serverData.RoundNumber != 1)
+            chatBehaviour.SendMessageToChat(PhotonNetwork.NickName + " ended it's turn with " + thisPlayerAmountOfCards + " cards.", Message.MessageType.info);
+        else
+            chatBehaviour.SendMessageToChat(PhotonNetwork.NickName + " had the biggest bomb!", Message.MessageType.info);
+
         foreach (DraggablePiece pieces in playerHand.GetComponentsInChildren<DraggablePiece>())
         {
             pieces.ReturnToWhite();

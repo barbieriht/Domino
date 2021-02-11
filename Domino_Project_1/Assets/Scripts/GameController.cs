@@ -31,6 +31,8 @@ public class GameController : MonoBehaviourPun
     public ServerData serverData;
     public ChatBehaviour chatBehaviour;
 
+    public Canvas canvas;
+    public GameObject Timer;
     private GameObject Table;
     private Transform playerHand;
 
@@ -238,6 +240,7 @@ public class GameController : MonoBehaviourPun
         }
         else
         {
+            Instantiate(Timer, canvas.transform);
             if(serverData.RoundNumber != 1)
                 chatBehaviour.SendMessageToChat(PhotonNetwork.NickName + " turn.", Message.MessageType.info);
 
@@ -259,7 +262,12 @@ public class GameController : MonoBehaviourPun
     public void OnTurnCompleted()
     {
         if(serverData.RoundNumber != 1)
+        {
+            if (GameObject.FindGameObjectWithTag("Timer") != null)
+                GameObject.FindGameObjectWithTag("Timer").GetComponent<Timer>().DestroyTimer();
+
             chatBehaviour.SendMessageToChat(PhotonNetwork.NickName + " ended it's turn with " + thisPlayerAmountOfCards + " cards.", Message.MessageType.info);
+        }
         else
             chatBehaviour.SendMessageToChat(PhotonNetwork.NickName + " had the biggest bomb!", Message.MessageType.info);
 
@@ -267,6 +275,8 @@ public class GameController : MonoBehaviourPun
         {
             pieces.ReturnToWhite();
         }
+
+        
 
         if (thisPlayerAmountOfCards == 0)
         {
@@ -278,6 +288,15 @@ public class GameController : MonoBehaviourPun
 
     public void OnTurnTimeEnds()
     {
+        if (serverData.RoundNumber != 1)
+        {
+            chatBehaviour.SendMessageToChat(PhotonNetwork.NickName + " lost it's turn.", Message.MessageType.info);
+        }
+
+        foreach (DraggablePiece pieces in playerHand.GetComponentsInChildren<DraggablePiece>())
+        {
+            pieces.ReturnToWhite();
+        }
         serverData.SetRoundNumber(serverData.RoundNumber + 1);
     }
 

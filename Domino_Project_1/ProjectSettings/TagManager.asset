@@ -8,6 +8,7 @@ TagManager:
   - FullPiece
   - Deck
   - PlayerHand
+  - Timer
   layers:
   - Default
   - TransparentFX

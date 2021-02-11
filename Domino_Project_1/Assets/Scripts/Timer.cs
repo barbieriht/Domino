@@ -9,34 +9,43 @@ public class Timer : MonoBehaviour
     float countdown = 30f;
     float startTime;
 
+    public GameController gameController;
+
+    public Color orangeColor;
+
     public Text timerText;
 
     // Start is called before the first frame update
     void Start()
     {
-        startTime = (float)PhotonNetwork.Time;
-        StartCoroutine(WaitForDestroy(countdown));
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+
+        startTime = (float)Time.time;
+        //StartCoroutine(WaitForDestroy(countdown));
     }
 
     // Update is called once per frame
     void Update()
     {
-        float timer = (float)PhotonNetwork.Time - startTime;
+        float timer = (float)Time.time - startTime;
         float countdownTemp = countdown - timer;
 
-        string seconds = (countdown % 60).ToString("00");
+        string seconds = (countdownTemp % 60).ToString("00");
+
+        if (countdownTemp > 15.5f)
+            timerText.color = Color.white;
+        else if (countdownTemp > 5.5f && countdownTemp <= 15.5f)
+            timerText.color = orangeColor;
+        else
+            timerText.color = Color.red;
 
         if (countdownTemp < 0.0f)
-            return;
+        {
+            gameController.OnTurnTimeEnds();
+            Destroy(this.gameObject);
+        }
 
         timerText.text = seconds;
-    }
-
-    IEnumerator WaitForDestroy(float time)
-    {
-        yield return new WaitForSeconds(time);
-
-        Destroy(this.gameObject);
     }
 
     public void DestroyTimer()

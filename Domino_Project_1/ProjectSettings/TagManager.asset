@@ -49,12 +49,12 @@ TagManager:
   - name: Table
     uniqueID: 662047637
     locked: 0
-  - name: Deck
+  - name: UI
     uniqueID: 4147546979
     locked: 0
   - name: Pieces
     uniqueID: 3954527451
     locked: 0
-  - name: Values
-    uniqueID: 3322515827
+  - name: PiecesInHand
+    uniqueID: 166167869
     locked: 0

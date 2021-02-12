@@ -17,11 +17,12 @@ public class DraggablePiece : MonoBehaviour
 
     public int[] ValuesInThisPiece = new int[2];
 
-    public Renderer pieceColor;
+    public Renderer pieceRenderer;
+    public Color pieceColor;
 
     private void Start()
     {
-        pieceColor = GetComponent<Renderer>();
+        pieceRenderer = GetComponent<Renderer>();
 
         int index = 0;
         foreach(PieceBehaviour piece in GetComponentsInChildren<PieceBehaviour>())
@@ -91,7 +92,7 @@ public class DraggablePiece : MonoBehaviour
             {
                 if(ValuesInThisPiece[i] == serverData.AvailablePieces[j])
                 {
-                    pieceColor.material.color = Color.green;
+                    pieceRenderer.material.color = pieceColor;
                     qtd++;
                 }
             }
@@ -102,7 +103,7 @@ public class DraggablePiece : MonoBehaviour
 
     public void ReturnToWhite()
     {
-        pieceColor.material.color = Color.white;
+        pieceRenderer.material.color = Color.white;
 
     }
 

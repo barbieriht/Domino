@@ -14,7 +14,7 @@ public class ChatBehaviour : MonoBehaviourPun
 
     public InputField chatBox;
 
-    public Color playerMessage, info;
+    public Color playerMessage, info, warning;
 
     [SerializeField]
     List<Message> messageList = new List<Message>();
@@ -78,6 +78,9 @@ public class ChatBehaviour : MonoBehaviourPun
             case Message.MessageType.info:
                 color = info;
                 break;
+            case Message.MessageType.warning:
+                color = warning;
+                break;
         }
 
         return color;
@@ -94,6 +97,7 @@ public class Message
     public enum MessageType
     {
         playerMessage,
-        info
+        info,
+        warning
     }
 }

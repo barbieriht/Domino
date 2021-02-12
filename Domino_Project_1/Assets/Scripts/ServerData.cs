@@ -168,6 +168,13 @@ public class ServerData : MonoBehaviourPun
     {
         AllBiggestBombs.Sort();
         //PrintAllBombs();
+
+        if(AllBiggestBombs == null)
+        {
+            PhotonNetwork.LoadLevel("Domino - GameScene");
+            return;
+        }
+
         biggestGlobalBomb = AllBiggestBombs[AllBiggestBombs.Count - 1];
         //PrintText("The biggest bomb is " + biggestGlobalBomb);
         SetBiggestBomb(biggestGlobalBomb);
@@ -354,7 +361,7 @@ public class ServerData : MonoBehaviourPun
     [PunRPC]
     void TheWinnerPUN(string nickname)
     {
-        gameController.WinnerTxT.text = nickname + "is The Winner!!";
+        gameController.WinnerTxT.text = nickname + " is The Winner!!";
         gameController.WinnerImage.gameObject.SetActive(true);
         gameController.isGameFinished = true;
     }

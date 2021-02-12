@@ -10,6 +10,7 @@ public class Timer : MonoBehaviour
     float startTime;
 
     public GameController gameController;
+    public ServerData serverData;
 
     public Color orangeColor;
 
@@ -19,6 +20,7 @@ public class Timer : MonoBehaviour
     void Start()
     {
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        serverData = GameObject.Find("GameController").GetComponent<ServerData>();
 
         startTime = (float)Time.time;
         //StartCoroutine(WaitForDestroy(countdown));
@@ -41,7 +43,8 @@ public class Timer : MonoBehaviour
 
         if (countdownTemp < 0.0f)
         {
-            gameController.OnTurnTimeEnds();
+            if(serverData.IsMyTurn())
+                gameController.OnTurnTimeEnds();
             Destroy(this.gameObject);
         }
 

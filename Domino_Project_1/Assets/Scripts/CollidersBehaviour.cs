@@ -9,7 +9,6 @@ public class CollidersBehaviour : MonoBehaviour
 
     private int otherValue;
     public bool isPieceTip;
-    //public bool canConnect;
 
     public Collider2D HPieceCollider;
 
@@ -39,12 +38,6 @@ public class CollidersBehaviour : MonoBehaviour
             return;
         }
 
-        /*
-        if (other.gameObject.CompareTag("PlayerHand"))
-        {
-            canConnect = false;
-        }
-        */
 
         //se ambos colisores são do "lado" da peça, elas não podem se juntar
         if (!isPieceTip && !other.GetComponent<CollidersBehaviour>().isPieceTip)
@@ -53,6 +46,12 @@ public class CollidersBehaviour : MonoBehaviour
 
         //se ambas as peças são da mão do jogador, não podem se juntar
         if (FullPiece.transform.parent == other.GetComponent<CollidersBehaviour>().FullPiece.transform.parent)
+            return;
+
+        if (!FullPiece.GetComponent<DraggablePiece>().canConnect)
+            return;
+
+        if (FullPiece.GetComponent<DraggablePiece>().isColliding)
             return;
 
         if (this.gameObject.GetComponentInParent<HalfPiece>().halfPieceConnected)
@@ -119,12 +118,4 @@ public class CollidersBehaviour : MonoBehaviour
         }
     }
 
-    /*private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("PlayerHand"))
-        {
-            canConnect = true;
-            return;
-        }
-    }*/
 }

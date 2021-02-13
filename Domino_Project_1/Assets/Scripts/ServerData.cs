@@ -83,8 +83,6 @@ public class ServerData : MonoBehaviourPun
     public void PrintAllBombs() => photonView.RPC("PrintAllBombsPUN", RpcTarget.All);
 
     public void PrintText(string text) => photonView.RPC("PrintTextPUN", RpcTarget.MasterClient, text);
-
-    public void TheWinner(string nick) => photonView.RPC("TheWinnerPUN", RpcTarget.All, nick);
     
 
     public void AddFirstPlayer()
@@ -355,15 +353,6 @@ public class ServerData : MonoBehaviourPun
         else
             gameController.fullDeck[i] = false;
 
-    }
-
-
-    [PunRPC]
-    void TheWinnerPUN(string nickname)
-    {
-        gameController.WinnerTxT.text = nickname + " is The Winner!!";
-        gameController.WinnerImage.gameObject.SetActive(true);
-        gameController.isGameFinished = true;
     }
 
     [PunRPC]

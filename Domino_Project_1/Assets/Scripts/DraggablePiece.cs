@@ -9,11 +9,16 @@ public class DraggablePiece : MonoBehaviour
 
     private Vector3 screenPoint;
     private Vector3 offset;
+    public Vector3 initialPosition;
 
     public ServerData serverData;
     public GameController gameController;
 
     public Transform TableTransform;
+    public Transform playerHand;
+
+    public bool canConnect;
+    public bool isColliding;
 
     public int[] ValuesInThisPiece = new int[2];
 
@@ -34,6 +39,9 @@ public class DraggablePiece : MonoBehaviour
 
     void OnMouseDown()
     {
+        canConnect = true;
+        initialPosition = this.transform.position;
+
         screenPoint = Camera.main.WorldToScreenPoint(transform.position);
         offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
     }
@@ -82,6 +90,17 @@ public class DraggablePiece : MonoBehaviour
         } 
     }
 
+
+    private void OnMouseUp()
+    {
+        if(this.transform.parent == playerHand)
+        {
+            canConnect = false;
+
+            this.transform.position = initialPosition;
+        }
+    }
+
     public int ChangeColor()
     {
         int qtd = 0;
@@ -110,5 +129,17 @@ public class DraggablePiece : MonoBehaviour
     public void Destroy()
     {
         Destroy(gameObject);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("FullPiece"))
+            isColliding = true;
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("FullPiece"))
+            isColliding = false;
     }
 }

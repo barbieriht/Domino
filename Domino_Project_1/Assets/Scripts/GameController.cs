@@ -26,10 +26,15 @@ public class GameController : MonoBehaviourPun
     public int sumLeftCards;
     public int sumLeftCardsGlobal;
 
+    public int lowerPiece;
+    public int lowerPieceGlobal;
+
     public static List<int> AllAvailableValues = new List<int>();
     [SerializeField]
     public List<string> PlayersWhoPassedTurn = new List<string>();
     public List<int> PiecesLeft = new List<int>();
+    public List<int> LowerPiece = new List<int>();
+    public List<string> WinnerS = new List<string>();
 
     public int amountOfCards = 28;
     public int thisPlayerAmountOfCards = 7;
@@ -242,13 +247,13 @@ public class GameController : MonoBehaviourPun
         {
             buyButton.gameObject.SetActive(false);
             passButton.gameObject.SetActive(false);
-
         }
         else
         {
-            
             if (PlayersWhoPassedTurn != null)
             {
+                photonView.RPC("GetPiecesLeftPUN", RpcTarget.All, false);
+
                 photonView.RPC("PlayersPassedTurnPUN", RpcTarget.All, PhotonNetwork.NickName, false);
             }
 
@@ -300,9 +305,14 @@ public class GameController : MonoBehaviourPun
     {
         photonView.RPC("DestroyTimerPUN", RpcTarget.All);
 
+        photonView.RPC("GetPiecesLeftPUN", RpcTarget.All, true);
+
         photonView.RPC("PlayersPassedTurnPUN", RpcTarget.All, PhotonNetwork.NickName, true);
 
         chatBehaviour.SendMessageToChat(PhotonNetwork.NickName + " passed the turn.", Message.MessageType.info);
+
+        if (PiecesLeft.Count >= PhotonNetwork.PlayerList.Length)
+            return;
 
         serverData.SetRoundNumber(serverData.RoundNumber + 1);
     }
@@ -325,19 +335,37 @@ public class GameController : MonoBehaviourPun
 
     public void OnPlayerWin(string nick)
     {
-        serverData.TheWinner(nick);
+        photonView.RPC("TheWinnerPUN", RpcTarget.All, nick);
     }
 
     public void OnPiecesOver()
     {
-        serverData.PrintText("OnPiecesOverrr");
+        if (WinnerS.Count == 1)
+            OnPlayerWin(WinnerS[0]);
+        else
+        {
+            int lower = 28;
+            foreach(DraggablePiece pieces in playerHand.GetComponentsInChildren<DraggablePiece>())
+            {
+                if (pieces.cardNumber <= lower)
+                    lower = pieces.cardNumber;
+            }
+
+            lowerPiece = lower;
+
+            AddLowerPiecePUN(lower);
+
+            if (LowerPiece.Count >= PhotonNetwork.PlayerList.Length)
+            {
+                photonView.RPC("SortLowerPiecesPUN", RpcTarget.MasterClient);
+            }
+        }
     }
 
     [PunRPC]
     void InstantiateTimerPUN()
     {
         Instantiate(Timer, canvas.transform);
-
     }
 
     [PunRPC]
@@ -355,18 +383,30 @@ public class GameController : MonoBehaviourPun
         else
             PlayersWhoPassedTurn.Remove(nick);
 
-        if (PlayersWhoPassedTurn.Count >= PhotonNetwork.PlayerList.Length)
+        if (PiecesLeft.Count >= PhotonNetwork.PlayerList.Length)
         {
+            serverData.PrintText("Todos pularam o turno");
+
             OnPiecesOverPUN();
         }
     }
 
     void OnPiecesOverPUN()
     {
-        int index = 0;
-        foreach(Player player in PhotonNetwork.PlayerList)
+        if (PhotonNetwork.IsMasterClient)
         {
-            if(player.NickName == PhotonNetwork.NickName)
+            serverData.PrintText("Vou organizar as peças");
+
+            photonView.RPC("SortPiecesLeftPUN", RpcTarget.MasterClient);
+        }
+    }
+
+    [PunRPC]
+    void GetPiecesLeftPUN(bool add)
+    {
+        foreach (Player player in PhotonNetwork.PlayerList)
+        {
+            if (player.NickName == PhotonNetwork.NickName)
             {
                 int aux = 0;
 
@@ -377,22 +417,20 @@ public class GameController : MonoBehaviourPun
                         aux += pieces.ValuesInThisPiece[i];
                     }
                 }
-
-                photonView.RPC("AddOnPiecesLeftPUN", RpcTarget.All, aux);
-                index++;
+                sumLeftCards = aux;
             }
         }
 
-        if(index == PhotonNetwork.PlayerList.Length)
-        {
-            photonView.RPC("SortPiecesLeftPUN", RpcTarget.All);
-        }
+        photonView.RPC("AddOnPiecesLeftPUN", RpcTarget.All, sumLeftCards, add);
     }
 
     [PunRPC]
-    void AddOnPiecesLeftPUN(int amount)
+    void AddOnPiecesLeftPUN(int sum, bool add)
     {
-        PiecesLeft.Add(amount);
+        if (add)
+            PiecesLeft.Add(sum);
+        else
+            PiecesLeft.Remove(sum);
     }
 
     [PunRPC]
@@ -400,12 +438,73 @@ public class GameController : MonoBehaviourPun
     {
         PiecesLeft.Sort();
 
-        sumLeftCardsGlobal = PiecesLeft[0];
+        for(int i = 0; i < PiecesLeft.Count; i++)
+        {
+            serverData.PrintText(i + ": " + PiecesLeft[i]);
+        }
+
+        photonView.RPC("SetWinnerPiecePUN", RpcTarget.All, PiecesLeft[0]);
+    }
+
+    [PunRPC]
+    void SortLowerPiecesPUN()
+    {
+        LowerPiece.Sort();
+
+        photonView.RPC("SetLowerPiecePUN", RpcTarget.All, LowerPiece[0]);
+    }
+
+    [PunRPC]
+    void SetWinnerPiecePUN(int piece)
+    {
+        sumLeftCardsGlobal = piece;
+
+        serverData.PrintText("A menor soma é de " + sumLeftCardsGlobal);
 
         if (sumLeftCards == sumLeftCardsGlobal)
-        {
-            OnPlayerWin(PhotonNetwork.NickName);
-        }
+            AddWinnerPUN(PhotonNetwork.NickName);
+
     }
-    
+
+    [PunRPC]
+    void SetLowerPiecePUN(int pieceNumber)
+    {
+        lowerPieceGlobal = pieceNumber;
+
+        serverData.PrintText("A menor peça é de " + lowerPieceGlobal);
+
+        if (lowerPiece == lowerPieceGlobal)
+            OnPlayerWin(PhotonNetwork.NickName);
+    }
+
+    [PunRPC]
+    void AddWinnerPUN(string nick)
+    {
+        WinnerS.Add(nick);
+
+        serverData.PrintText(nick + " é o vencedor");
+
+        if (PhotonNetwork.IsMasterClient)
+            OnPiecesOver();
+    }
+
+    [PunRPC]
+    void TheWinnerPUN(string nickname)
+    {
+        if (GameObject.FindGameObjectWithTag("Timer") != null)
+            GameObject.FindGameObjectWithTag("Timer").GetComponent<Timer>().DestroyTimer();
+
+        buyButton.gameObject.SetActive(false);
+        passButton.gameObject.SetActive(false);
+
+        WinnerTxT.text = nickname + " is The Winner!!";
+        WinnerImage.gameObject.SetActive(true);
+        isGameFinished = true;
+    }
+
+    [PunRPC]
+    void AddLowerPiecePUN(int pieceNumber)
+    {
+        LowerPiece.Add(pieceNumber);
+    }
 }

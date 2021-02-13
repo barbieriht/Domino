@@ -613,7 +613,7 @@ ScriptsOnlyBuild:
     className: SpriteShapeGeometryCache
   - hash:
       serializedVersion: 2
-      Hash: 7412c1d96a6a5f07e6ea74d72f6bfa95
+      Hash: fd8d843499954986162bd5cc624ada3b
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameController
@@ -1363,7 +1363,7 @@ ScriptsOnlyBuild:
     className: OnJoinedInstantiate
   - hash:
       serializedVersion: 2
-      Hash: 659cfdf6eb7917740e646d0a45e7ed65
+      Hash: bb061dfe26ed96edad6cdfbd7ad543ca
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: DraggablePiece

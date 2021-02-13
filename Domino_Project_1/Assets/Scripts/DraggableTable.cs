@@ -9,7 +9,6 @@ public class DraggableTable : MonoBehaviour
 
     void OnMouseDown()
     {
-
         screenPoint = Camera.main.WorldToScreenPoint(transform.position);
         offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
     }
@@ -21,4 +20,5 @@ public class DraggableTable : MonoBehaviour
         Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
         transform.position = curPosition;
     }
+
 }

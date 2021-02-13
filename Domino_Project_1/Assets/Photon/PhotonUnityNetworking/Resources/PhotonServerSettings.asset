@@ -100,6 +100,12 @@ MonoBehaviour:
   - OnPiecesOverPUN
   - SortPiecesLeftPUN
   - SetWinnerPUN
+  - AddWinnerPUN
+  - SetWinnerPiecePUN
+  - GetPiecesLeftPUN
+  - AddLowerPiecePUN
+  - SetLowerPiecePUN
+  - SortLowerPiecesPUN
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

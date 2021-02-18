@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 using Photon.Pun;
 using Photon.Realtime;
@@ -353,7 +354,7 @@ public class GameController : MonoBehaviourPun
 
             lowerPiece = lower;
 
-            AddLowerPiecePUN(lower);
+            photonView.RPC("AddLowerPiecePUN", RpcTarget.All, lower);
 
             if (LowerPiece.Count >= PhotonNetwork.PlayerList.Length)
             {
@@ -462,7 +463,7 @@ public class GameController : MonoBehaviourPun
         serverData.PrintText("A menor soma é de " + sumLeftCardsGlobal);
 
         if (sumLeftCards == sumLeftCardsGlobal)
-            AddWinnerPUN(PhotonNetwork.NickName);
+            photonView.RPC("AddWinnerPUN", RpcTarget.All, PhotonNetwork.NickName);
 
     }
 
@@ -507,4 +508,5 @@ public class GameController : MonoBehaviourPun
     {
         LowerPiece.Add(pieceNumber);
     }
+
 }

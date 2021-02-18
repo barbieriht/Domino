@@ -136,6 +136,7 @@ namespace Photon.Pun.Demo.Asteroids
 
             foreach (GameObject entry in playerListEntries.Values)
             {
+
                 Destroy(entry.gameObject);
             }
 

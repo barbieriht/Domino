@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 public class Timer : MonoBehaviour
 {
-    float countdown = 12f;
+    float countdown = 30f;
     float startTime;
 
     public GameController gameController;

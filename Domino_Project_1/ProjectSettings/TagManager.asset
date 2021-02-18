@@ -49,11 +49,11 @@ TagManager:
   - name: Table
     uniqueID: 662047637
     locked: 0
-  - name: UI
-    uniqueID: 4147546979
-    locked: 0
   - name: Pieces
     uniqueID: 3954527451
+    locked: 0
+  - name: UI
+    uniqueID: 4147546979
     locked: 0
   - name: PiecesInHand
     uniqueID: 166167869

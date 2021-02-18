@@ -281,6 +281,13 @@ public class ServerData : MonoBehaviourPun
             thisPiece.transform.SetParent(playerHand, true);
         thisPiece.transform.position = position + tableTransform.position - tablePosition;
         thisPiece.transform.rotation = rotation;
+
+        thisPiece.GetComponent<Renderer>().sortingLayerName = "Pieces";
+
+        foreach (Renderer child in thisPiece.GetComponentsInChildren<Renderer>())
+        {
+            child.sortingLayerName = "Pieces";
+        }
     }
 
 

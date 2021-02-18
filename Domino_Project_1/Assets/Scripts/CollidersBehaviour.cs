@@ -86,6 +86,13 @@ public class CollidersBehaviour : MonoBehaviour
                 gameController.thisPlayerAmountOfCards--;
                 serverData.SetPieceOn(FullPiece.name, FullPiece.position, TableTransform.position, FullPiece.rotation, true);
 
+                FullPiece.GetComponent<Renderer>().sortingLayerName = "Pieces";
+
+                foreach (Renderer child in FullPiece.GetComponentsInChildren<Renderer>())
+                {
+                    child.sortingLayerName = "Pieces";
+                }
+
                 this.GetComponentInParent<HalfPiece>().halfPieceConnected = true;
                 other.GetComponentInParent<HalfPiece>().halfPieceConnected = true;
 

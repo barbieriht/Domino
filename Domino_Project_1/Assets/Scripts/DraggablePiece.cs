@@ -79,6 +79,13 @@ public class DraggablePiece : MonoBehaviour
             this.gameObject.transform.position = new Vector3(0, 0, 0);
             this.gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
 
+            this.GetComponent<Renderer>().sortingLayerName = "Pieces";
+
+            foreach (Renderer child in this.GetComponentsInChildren<Renderer>())
+            {
+                child.sortingLayerName = "Pieces";
+            }
+
             serverData.isFirst = false;
             gameController.thisPlayerAmountOfCards--;
             serverData.SetPieceOn(this.gameObject.name, this.gameObject.transform.position, TableTransform.position, this.gameObject.transform.rotation, true);

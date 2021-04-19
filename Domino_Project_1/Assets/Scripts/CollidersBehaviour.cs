@@ -26,8 +26,6 @@ public class CollidersBehaviour : MonoBehaviour
         serverData = GameObject.FindGameObjectWithTag("GameController").GetComponent<ServerData>();
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         value = GetComponentInParent<PieceBehaviour>().GetValue();
-        //isBorder = GetComponentInParent<PieceBehaviour>().GetIsBorder();
-        //isOnHand = transform.parent.GetComponentInParent<PieceBehaviour>().GetIsOnHand();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -38,11 +36,9 @@ public class CollidersBehaviour : MonoBehaviour
             return;
         }
 
-
         //se ambos colisores são do "lado" da peça, elas não podem se juntar
         if (!isPieceTip && !other.GetComponent<CollidersBehaviour>().isPieceTip)
             return;
-
 
         //se ambas as peças são da mão do jogador, não podem se juntar
         if (FullPiece.transform.parent == other.GetComponent<CollidersBehaviour>().FullPiece.transform.parent)

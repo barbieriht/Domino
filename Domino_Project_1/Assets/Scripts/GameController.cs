@@ -10,7 +10,9 @@ using Photon.Pun;
 using Photon.Realtime;
 using Photon.Pun.UtilityScripts;
 
-public class GameController : MonoBehaviourPun
+using System.Linq;
+
+public class GameController : MonoBehaviourPunCallbacks
 {
     public GameObject[] Pieces;
 
@@ -361,6 +363,22 @@ public class GameController : MonoBehaviourPun
                 photonView.RPC("SortLowerPiecesPUN", RpcTarget.MasterClient);
             }
         }
+    }
+
+    public void QuitButton()
+    {
+        PhotonNetwork.LeaveRoom();
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        SceneManager.LoadScene(0);
+
+    }
+
+    public override void OnLeftRoom()
+    {
+        PhotonNetwork.Disconnect();
     }
 
     [PunRPC]

@@ -8,6 +8,8 @@ public class HalfPiece : MonoBehaviour
 
     void Start()
     {
+        this.gameObject.tag = "HalfPiece";
+        this.gameObject.layer = 13;
         halfPieceConnected = false;
     }
 

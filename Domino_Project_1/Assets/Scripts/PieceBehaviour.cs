@@ -13,7 +13,6 @@ public class PieceBehaviour : MonoBehaviour
     public bool upSide;
 
     private SpriteRenderer spriteRenderer;
-    private Sprite sprite;
 
     private string pieceName;
     private string imageName;
@@ -52,10 +51,10 @@ public class PieceBehaviour : MonoBehaviour
         }
     }
 
-    IEnumerator LoadPieceUI(FileInfo playerFile)
+    IEnumerator LoadPieceUI(FileInfo pieceFile)
     {
-        string wwwPlayerFilePath = "file://" + playerFile.FullName.ToString();
-        WWW www = new WWW(wwwPlayerFilePath);
+        string wwwPieceFilePath = "file://" + pieceFile.FullName.ToString();
+        WWW www = new WWW(wwwPieceFilePath);
         yield return www;
         spriteRenderer.sprite = Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), new Vector2(0.5f, 0.5f));
     }

@@ -9,6 +9,8 @@ TagManager:
   - Deck
   - PlayerHand
   - Timer
+  - HalfPiece
+  - Collider
   layers:
   - Default
   - TransparentFX
@@ -23,8 +25,8 @@ TagManager:
   - Values
   - Deck
   - PlayerHand
-  - 
-  - 
+  - HalfPiece
+  - Colliders
   - 
   - 
   - 

@@ -54,10 +54,10 @@ public class DraggablePiece : MonoBehaviour
             return;
 
         //não pode ser movida se já pertencer à mesa
-        if (this.transform.IsChildOf(GameObject.FindGameObjectWithTag("Table").transform))
+        /*if (this.transform.IsChildOf(GameObject.FindGameObjectWithTag("Table").transform))
         {
             return;
-        }
+        }*/
 
         if (gameController.isGameFinished)
             return;

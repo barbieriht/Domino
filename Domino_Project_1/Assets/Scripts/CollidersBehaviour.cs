@@ -20,6 +20,8 @@ public class CollidersBehaviour : MonoBehaviour
 
     void Start()
     {
+        this.gameObject.tag = "Collider";
+        this.gameObject.layer = 14;
         HPieceCollider = this.GetComponent<Collider2D>();
         TableTransform = GameObject.FindGameObjectWithTag("Table").transform;
         FullPiece = this.transform.parent.transform.parent;
@@ -42,6 +44,9 @@ public class CollidersBehaviour : MonoBehaviour
 
         //se ambas as peças são da mão do jogador, não podem se juntar
         if (FullPiece.transform.parent == other.GetComponent<CollidersBehaviour>().FullPiece.transform.parent)
+            return;
+
+        if (FullPiece.GetComponent<FullPieceCollider>().collidingWithOther)
             return;
 
         if (!FullPiece.GetComponent<DraggablePiece>().canConnect)

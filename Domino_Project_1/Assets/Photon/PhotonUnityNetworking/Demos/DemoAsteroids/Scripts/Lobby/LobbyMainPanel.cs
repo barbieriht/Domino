@@ -31,6 +31,12 @@ namespace Photon.Pun.Demo.Asteroids
         public GameObject RoomListContent;
         public GameObject RoomListEntryPrefab;
 
+        [Header("Instructions Panel")]
+        public GameObject InstructionsPanel;
+
+        [Header("Pieces Menu Panel")]
+        public GameObject PiecesMenuPanel;
+
         [Header("Inside Room Panel")]
         public GameObject InsideRoomPanel;
 
@@ -206,6 +212,12 @@ namespace Photon.Pun.Demo.Asteroids
             SetActivePanel(SelectionPanel.name);
         }
 
+        public void OnBackInstructionsOrPiecesMenuButtonClicked()
+        {
+
+            SetActivePanel(LoginPanel.name);
+        }
+
         public void OnCreateRoomButtonClicked()
         {
             string roomName = RoomNameInputField.text;
@@ -245,6 +257,16 @@ namespace Photon.Pun.Demo.Asteroids
             {
                 Debug.LogError("Player Name is invalid.");
             }
+        }
+
+        public void OnInstructionsButtonClicked()
+        {
+            SetActivePanel(InstructionsPanel.name);
+        }
+
+        public void OnPiecesMenuButtonClicked()
+        {
+            SetActivePanel(PiecesMenuPanel.name);
         }
 
         public void OnRoomListButtonClicked()
@@ -315,6 +337,8 @@ namespace Photon.Pun.Demo.Asteroids
             CreateRoomPanel.SetActive(activePanel.Equals(CreateRoomPanel.name));
             JoinRandomRoomPanel.SetActive(activePanel.Equals(JoinRandomRoomPanel.name));
             RoomListPanel.SetActive(activePanel.Equals(RoomListPanel.name));    // UI should call OnRoomListButtonClicked() to activate this
+            InstructionsPanel.SetActive(activePanel.Equals(InstructionsPanel.name));
+            PiecesMenuPanel.SetActive(activePanel.Equals(PiecesMenuPanel.name));
             InsideRoomPanel.SetActive(activePanel.Equals(InsideRoomPanel.name));
         }
 

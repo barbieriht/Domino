@@ -46,9 +46,6 @@ public class CollidersBehaviour : MonoBehaviour
         if (FullPiece.transform.parent == other.GetComponent<CollidersBehaviour>().FullPiece.transform.parent)
             return;
 
-        if (FullPiece.GetComponent<FullPieceCollider>().collidingWithOther)
-            return;
-
         if (!FullPiece.GetComponent<DraggablePiece>().canConnect)
             return;
 

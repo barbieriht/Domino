@@ -1,55 +1,44 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
-using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class PiecesInMenu : MonoBehaviour
 {
-    [SerializeField]
+    /*
+     * [SerializeField]
     private int value;
     [SerializeField]
     private int index;
-
-    private SpriteRenderer spriteRenderer;
+    */
 
     private string imageName;
 
+    Texture2D thisTexture;
+    RawImage rawImage;
+
     private void Start()
     {
-        spriteRenderer = this.GetComponent<SpriteRenderer>();
+        rawImage = gameObject.GetComponent<RawImage>();
 
-        
-    }
-
-    private void OnEnable()
-    {
-        index = this.transform.GetSiblingIndex();
+        /*
+         * index = this.transform.GetSiblingIndex();
         value = this.transform.parent.transform.GetSiblingIndex() - 1;
-
+        
         imageName = "Image" + value.ToString() + index.ToString() + ".png";
+        */
+        imageName = "Image" + gameObject.name + ".png";
 
-        //Debug.Log(imageName);
+        BetterStreamingAssets.Initialize();
 
-        SelectImage();
+        thisTexture = new Texture2D(100, 100);
+
+        byte[] bytes = BetterStreamingAssets.ReadAllBytes(imageName);
+
+        thisTexture.LoadImage(bytes);
+        thisTexture.name = imageName;
+        rawImage.texture = thisTexture;
     }
 
-    public void SelectImage()
-    {
-        DirectoryInfo directoryInfo = new DirectoryInfo(Application.streamingAssetsPath);
-
-        foreach (FileInfo file in directoryInfo.GetFiles("*.*"))
-        {
-            if (file.Name.Contains(imageName))
-                StartCoroutine("LoadPieceUI", file);
-        }
-    }
-
-    IEnumerator LoadPieceUI(FileInfo pieceFile)
-    {
-        string wwwPieceFilePath = "file://" + pieceFile.FullName.ToString();
-        WWW www = new WWW(wwwPieceFilePath);
-        yield return www;
-        spriteRenderer.sprite = Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), new Vector2(0.5f, 0.5f));
-    }
+    
 }

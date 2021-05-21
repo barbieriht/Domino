@@ -5,13 +5,6 @@ using UnityEngine.UI;
 
 public class PiecesInMenu : MonoBehaviour
 {
-    /*
-     * [SerializeField]
-    private int value;
-    [SerializeField]
-    private int index;
-    */
-
     private string imageName;
 
     Texture2D thisTexture;
@@ -21,12 +14,6 @@ public class PiecesInMenu : MonoBehaviour
     {
         rawImage = gameObject.GetComponent<RawImage>();
 
-        /*
-         * index = this.transform.GetSiblingIndex();
-        value = this.transform.parent.transform.GetSiblingIndex() - 1;
-        
-        imageName = "Image" + value.ToString() + index.ToString() + ".png";
-        */
         imageName = "Image" + gameObject.name + ".png";
 
         BetterStreamingAssets.Initialize();

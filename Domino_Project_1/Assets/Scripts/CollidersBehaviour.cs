@@ -16,6 +16,8 @@ public class CollidersBehaviour : MonoBehaviour
     public Transform FullPiece;
     public ServerData serverData;
     public Transform TableTransform;
+    private Collider2D []AllColliders;
+    private Collider2D[] AllOtherColliders;
     public GameController gameController;
 
     void Start()
@@ -49,11 +51,11 @@ public class CollidersBehaviour : MonoBehaviour
         if (!FullPiece.GetComponent<DraggablePiece>().canConnect)
             return;
 
-        if (FullPiece.GetComponent<DraggablePiece>().isColliding)
+        if (FullPiece.GetComponent<DraggablePiece>().isColliding || other.gameObject.transform.parent.transform.parent.GetComponent<DraggablePiece>().isColliding)
             return;
 
-        if (this.gameObject.GetComponentInParent<HalfPiece>().halfPieceConnected)
-            return;
+        //if (this.gameObject.GetComponentInParent<HalfPiece>().halfPieceConnected || other.gameObject.GetComponentInParent<HalfPiece>().halfPieceConnected)
+        //    return;
 
         //se o outro objeto ainda não foi ligado
         if (!other.gameObject.GetComponentInParent<HalfPiece>().halfPieceConnected)
@@ -82,7 +84,6 @@ public class CollidersBehaviour : MonoBehaviour
                 //FullPiece.GetComponent<Renderer>().sortingLayerName = "Pieces";
 
                 gameController.thisPlayerAmountOfCards--;
-                serverData.SetPieceOn(FullPiece.name, FullPiece.position, TableTransform.position, FullPiece.rotation, true);
 
                 FullPiece.GetComponent<Renderer>().sortingLayerName = "Pieces";
 
@@ -91,16 +92,28 @@ public class CollidersBehaviour : MonoBehaviour
                     child.sortingLayerName = "Pieces";
                 }
 
-                this.GetComponentInParent<HalfPiece>().halfPieceConnected = true;
-                other.GetComponentInParent<HalfPiece>().halfPieceConnected = true;
+                //this.GetComponentInParent<HalfPiece>().halfPieceConnected = true;
+                //other.GetComponentInParent<HalfPiece>().halfPieceConnected = true;
+                AllColliders = this.transform.parent.GetComponentsInChildren<Collider2D>();
 
-                for(int i = 0; i < 2; i++)
+                foreach (Collider2D collider in AllColliders)
+                {
+                    collider.gameObject.SetActive(false);
+                }
+
+                AllOtherColliders = other.transform.parent.GetComponentsInChildren<Collider2D>();
+
+                foreach (Collider2D collider in AllOtherColliders)
+                {
+                    collider.gameObject.SetActive(false);
+                }
+
+                for (int i = 0; i < 2; i++)
                 {
                     if (GetComponentInParent<DraggablePiece>().ValuesInThisPiece[i] != value)
                     {
                         otherValueOfThis = GetComponentInParent<DraggablePiece>().ValuesInThisPiece[i];
                     }
-
                 }
 
                 if (GetComponentInParent<DraggablePiece>().isDouble)
@@ -109,6 +122,8 @@ public class CollidersBehaviour : MonoBehaviour
                 serverData.ValuesToPut(otherValueOfThis, value);
 
                 this.FullPiece.GetComponent<DraggablePiece>().ReturnToWhite();
+
+                serverData.SetPieceOn(FullPiece.name, FullPiece.position, TableTransform.position, FullPiece.rotation, this.transform.parent.name, other.transform.parent.name, true);
 
                 gameController.OnTurnCompleted();
             }

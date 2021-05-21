@@ -88,7 +88,7 @@ public class DraggablePiece : MonoBehaviour
 
             serverData.isFirst = false;
             gameController.thisPlayerAmountOfCards--;
-            serverData.SetPieceOn(this.gameObject.name, this.gameObject.transform.position, TableTransform.position, this.gameObject.transform.rotation, true);
+            serverData.SetPieceOn(this.gameObject.name, this.gameObject.transform.position, TableTransform.position, this.gameObject.transform.rotation, null, null, true);
             serverData.ValuesToPut(GetComponentInChildren<PieceBehaviour>().value, GetComponentInChildren<PieceBehaviour>().value);
 
             gameController.OnTurnCompleted();

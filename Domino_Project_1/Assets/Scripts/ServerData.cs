@@ -58,7 +58,7 @@ public class ServerData : MonoBehaviourPun
 
     public void SetPieceOff(string pieceName) => photonView.RPC("SetPieceOffPUN", RpcTarget.All, pieceName);
 
-    public void SetPieceOn(string namePiece, Vector3 position, Vector3 tablePosition, Quaternion rotation, bool parent) => photonView.RPC("SetPieceOnPUN", RpcTarget.Others, namePiece, position, tablePosition, rotation, parent);
+    public void SetPieceOn(string namePiece, Vector3 position, Vector3 tablePosition, Quaternion rotation, string halfPieceName, string otherHalfPieceName, bool parent) => photonView.RPC("SetPieceOnPUN", RpcTarget.Others, namePiece, position, tablePosition, rotation, halfPieceName, otherHalfPieceName, parent);
 
     public void SavePickedPieces(int i, bool option) => photonView.RPC("SavePickedPiecesPUN", RpcTarget.Others, i, option);
 
@@ -272,15 +272,35 @@ public class ServerData : MonoBehaviourPun
     }
 
     [PunRPC]
-    void SetPieceOnPUN(string namePiece, Vector3 position, Vector3 tablePosition, Quaternion rotation, bool parent)
+    void SetPieceOnPUN(string namePiece, Vector3 position, Vector3 tablePosition, Quaternion rotation, string halfPieceName, string otherHalfPieceName, bool parent)
     {
         GameObject thisPiece = GameObject.Find(namePiece);
+        GameObject halfPiece = GameObject.Find(halfPieceName);
+        GameObject otherHalfPiece = GameObject.Find(otherHalfPieceName);
+
         if (parent)
             thisPiece.transform.SetParent(tableTransform, true);
         else
             thisPiece.transform.SetParent(playerHand, true);
         thisPiece.transform.position = position + tableTransform.position - tablePosition;
         thisPiece.transform.rotation = rotation;
+
+        
+        if(halfPieceName != null)
+        {
+            foreach (Collider2D collider in halfPiece.GetComponentsInChildren<Collider2D>())
+            {
+                collider.gameObject.SetActive(false);
+            }
+        }
+
+        if (otherHalfPieceName != null)
+        {
+            foreach (Collider2D collider in otherHalfPiece.GetComponentsInChildren<Collider2D>())
+            {
+                collider.gameObject.SetActive(false);
+            }
+        }
 
         thisPiece.GetComponent<Renderer>().sortingLayerName = "Pieces";
 

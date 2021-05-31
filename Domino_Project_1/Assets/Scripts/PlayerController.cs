@@ -10,4 +10,12 @@ public class PlayerController : MonoBehaviour
     public string nickName { get; set; }
     public int biggestBombInHand { get; set; }
 
+    private string typeName;
+
+    void Start()
+    {
+        BetterStreamingAssets.Initialize();
+
+        typeName = BetterStreamingAssets.ReadAllText("config-type.txt");
+    }
 }

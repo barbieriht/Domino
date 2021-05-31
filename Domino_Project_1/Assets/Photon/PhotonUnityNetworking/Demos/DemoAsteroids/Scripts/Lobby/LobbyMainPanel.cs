@@ -37,13 +37,16 @@ namespace Photon.Pun.Demo.Asteroids
         [Header("Pieces Menu Panel")]
         public GameObject PiecesMenuPanel;
 
+        [Header("About Panel")]
+        public GameObject AboutPanel;
+
         [Header("Inside Room Panel")]
         public GameObject InsideRoomPanel;
 
         public Button StartGameButton;
         public GameObject PlayerListEntryPrefab;
 
-        private Dictionary<string, RoomInfo> cachedRoomList;
+                private Dictionary<string, RoomInfo> cachedRoomList;
         private Dictionary<string, GameObject> roomListEntries;
         private Dictionary<int, GameObject> playerListEntries;
 
@@ -269,6 +272,11 @@ namespace Photon.Pun.Demo.Asteroids
             SetActivePanel(PiecesMenuPanel.name);
         }
 
+        public void OnAboutButtonClicked()
+        {
+            SetActivePanel(AboutPanel.name);
+        }
+
         public void OnRoomListButtonClicked()
         {
             if (!PhotonNetwork.InLobby)
@@ -296,8 +304,11 @@ namespace Photon.Pun.Demo.Asteroids
                 return false;
             }
 
+            int count = 0;
+
             foreach (Player p in PhotonNetwork.PlayerList)
             {
+                count++;
                 object isPlayerReady;
                 if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out isPlayerReady))
                 {
@@ -311,6 +322,9 @@ namespace Photon.Pun.Demo.Asteroids
                     return false;
                 }
             }
+
+            if (count < 2)
+                return false;
 
             return true;
         }
@@ -339,6 +353,7 @@ namespace Photon.Pun.Demo.Asteroids
             RoomListPanel.SetActive(activePanel.Equals(RoomListPanel.name));    // UI should call OnRoomListButtonClicked() to activate this
             InstructionsPanel.SetActive(activePanel.Equals(InstructionsPanel.name));
             PiecesMenuPanel.SetActive(activePanel.Equals(PiecesMenuPanel.name));
+            AboutPanel.SetActive(activePanel.Equals(AboutPanel.name));
             InsideRoomPanel.SetActive(activePanel.Equals(InsideRoomPanel.name));
         }
 

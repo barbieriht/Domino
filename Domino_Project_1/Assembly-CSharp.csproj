@@ -59,6 +59,7 @@
     <Compile Include="Assets\Scripts\NetworkController.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\TextToggleIsOnTransition.cs" />
     <Compile Include="Assets\Scripts\ChatBehaviour.cs" />
+    <Compile Include="Assets\Scripts\TextFile.cs" />
     <Compile Include="Assets\Photon\PhotonRealtime\Demos\DemoLoadBalancing\ConnectAndJoinRandomLb.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\NamePickGui.cs" />
@@ -83,12 +84,20 @@
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.xml" />
+     <None Include="Assets\StreamingAssets\description_4.txt" />
      <None Include="Assets\Photon\PhotonUnityNetworking\changelog.txt" />
+     <None Include="Assets\StreamingAssets\description_3.txt" />
+     <None Include="Assets\StreamingAssets\title.txt" />
+     <None Include="Assets\StreamingAssets\description_6.txt" />
+     <None Include="Assets\StreamingAssets\description_0.txt" />
+     <None Include="Assets\StreamingAssets\description_2.txt" />
      <None Include="Assets\Photon\PhotonLibs\changes-library.txt" />
+     <None Include="Assets\StreamingAssets\description_5.txt" />
      <None Include="Assets\Photon\PhotonUnityNetworking\readme.txt" />
      <None Include="Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.dll" />
      <None Include="Assets\Photon\PhotonLibs\Photon3Unity3D.dll" />
      <None Include="Assets\Photon\PhotonLibs\Metro\Photon3Unity3D.dll" />
+     <None Include="Assets\StreamingAssets\description_1.txt" />
      <None Include="Assets\Photon\PhotonLibs\Photon3Unity3D.xml" />
      <None Include="Assets\Photon\PhotonUnityNetworking\link.xml" />
     <Reference Include="UnityEngine">

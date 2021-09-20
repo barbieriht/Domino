@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Table
+  - FullPiece
+  - Deck
+  - PlayerHand
+  - Timer
+  - HalfPiece
+  - Collider
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - Table
+  - Pieces
+  - Values
+  - Deck
+  - PlayerHand
+  - HalfPiece
+  - Colliders
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Table
+    uniqueID: 662047637
+    locked: 0
+  - name: Pieces
+    uniqueID: 3954527451
+    locked: 0
+  - name: UI
+    uniqueID: 4147546979
+    locked: 0
+  - name: PiecesInHand
+    uniqueID: 166167869
+    locked: 0
